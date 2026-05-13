@@ -1,0 +1,43 @@
+name: Atualizar Dados w1nner
+
+on:
+  schedule:
+    # Roda a cada 30 min em dias úteis, das 8h às 20h (horário de Brasília = UTC-3)
+    - cron: '*/30 11-23 * * 1-5'
+  workflow_dispatch: # permite rodar manualmente pelo GitHub
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
+
+      - name: Rodar robô
+        env:
+          CONTA1_EMAIL:     ${{ secrets.CONTA1_EMAIL }}
+          CONTA1_SENHA:     ${{ secrets.CONTA1_SENHA }}
+          NOME_ESCRITORIO:  ${{ secrets.NOME_ESCRITORIO }}
+        run: python robo.py
+
+      - name: Commit e push dos CSVs atualizados
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dados_extraidos.csv ranking_muapd.csv metas.json
+          git diff --cached --quiet || git commit -m "dados: atualização automática $(date -u '+%d/%m/%Y %H:%M') UTC"
+          git push

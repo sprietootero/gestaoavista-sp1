@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>W1 Gestão à Vista – SP1</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Barra de progresso (ciclo automático de exibição) -->
+  <div class="progress-container">
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+
+  <!-- Cabeçalho -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-box">W1</div>
+      <div class="header-titles">
+        <h1 class="header-title">Gestão à Vista – Office SP1</h1>
+        <p class="header-subtitle">PRODUÇÃO E RANKINGS EM TEMPO REAL</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button id="btn-atualizar" class="btn-atualizar" onclick="recarregarDados()">Atualizar</button>
+      <div class="sync-info">
+        <span class="sync-dot"></span>
+        <span id="sync-time">–</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Metas -->
+  <div class="goals-grid">
+    <div class="goal-box goal-ap-semana">
+      <span class="goal-label">META AP SEMANA</span>
+      <span class="goal-value" id="meta-ap-semana">–</span>
+    </div>
+    <div class="goal-box goal-pp-semana">
+      <span class="goal-label">META PP SEMANA</span>
+      <span class="goal-value" id="meta-pp-semana">–</span>
+    </div>
+    <div class="goal-box goal-ap-mes">
+      <span class="goal-label">META AP MÊS</span>
+      <span class="goal-value" id="meta-ap-mes">–</span>
+    </div>
+    <div class="goal-box goal-pp-mes">
+      <span class="goal-label">META PP MÊS</span>
+      <span class="goal-value" id="meta-pp-mes">–</span>
+    </div>
+  </div>
+
+  <!-- Corpo principal -->
+  <main class="main-body">
+
+    <!-- View: Resultados -->
+    <section id="view-results" class="view active">
+      <div class="section-title-bar">
+        <span class="section-indicator"></span>
+        <h2 class="section-title">RESULTADOS DO MÊS</h2>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="w1-table">
+          <thead>
+            <tr>
+              <th>Equipe</th>
+              <th>AA</th>
+              <th>AF</th>
+              <th>AP</th>
+              <th>AP Valor</th>
+              <th>REC</th>
+              <th class="col-pp">PP Total</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+          <tfoot id="table-footer"></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- View: Ranking MUAPD -->
+    <section id="view-ranking" class="view">
+      <div class="section-title-bar">
+        <span class="section-indicator"></span>
+        <h2 class="section-title">RANKING MUAPD</h2>
+        <span class="ranking-subtitle">Agendamentos (AA)</span>
+      </div>
+      <div id="ranking-grid" class="ranking-grid"></div>
+    </section>
+
+    <!-- Painel lateral de ranking (visível junto com resultados em telas largas) -->
+    <aside class="ranking-aside">
+      <div class="ranking-aside-header">
+        <h3>RANKING MUAPD</h3>
+        <span class="ranking-aside-sub">Agendamentos (AA)</span>
+      </div>
+      <div class="ranking-aside-cols">
+        <span class="ranking-aside-label">#</span>
+        <span class="ranking-aside-label">Consultor</span>
+        <span class="ranking-aside-label col-aa">AA</span>
+      </div>
+      <div id="ranking-aside-body"></div>
+    </aside>
+
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
