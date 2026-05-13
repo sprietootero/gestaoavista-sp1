@@ -20,6 +20,37 @@ const rankingAside = document.getElementById('ranking-aside-body');
 const syncTime     = document.getElementById('sync-time');
 
 // ── Metas ──────────────────────────────────────
+let metaAPMes = 0;
+let metaPPMes = 0;
+
+function semanaDoMes() {
+  const dia = new Date().getDate();
+  if (dia <= 7)  return 1;
+  if (dia <= 14) return 2;
+  if (dia <= 21) return 3;
+  return 4;
+}
+
+function calcularMetaSemana(metaMes, realizado) {
+  const semana = semanaDoMes();
+  const falta  = Math.max(0, metaMes - realizado);
+  if (semana === 1) return metaMes / 4;
+  if (semana === 2) return falta / 3;
+  if (semana === 3) return falta / 2;
+  return falta;
+}
+
+function atualizarMetasSemana(totalAPValor, totalPP) {
+  if (metaAPMes > 0) {
+    const metaAPSemana = calcularMetaSemana(metaAPMes, totalAPValor);
+    document.getElementById('meta-ap-semana').textContent = formatarBRL(metaAPSemana);
+  }
+  if (metaPPMes > 0) {
+    const metaPPSemana = calcularMetaSemana(metaPPMes, totalPP);
+    document.getElementById('meta-pp-semana').textContent = formatarPP(metaPPSemana);
+  }
+}
+
 function formatarBRL(valor) {
   const num = parseFloat(String(valor).replace(/\./g, '').replace(',', '.'));
   if (isNaN(num)) return valor;
@@ -37,15 +68,17 @@ async function carregarMetas() {
     const res  = await fetch('metas.json' + CACHE_BUST());
     const meta = await res.json();
 
+    metaAPMes = parseFloat(meta.meta_ap_mes) || 0;
+    metaPPMes = parseFloat(meta.meta_pp_mes) || 0;
+
     const set = (id, val, fmt) => {
       const el = document.getElementById(id);
       if (el && val) el.textContent = fmt(val);
     };
 
-    set('meta-ap-semana', meta.meta_ap_semana, formatarBRL);
-    set('meta-pp-semana', meta.meta_pp_semana, formatarPP);
-    set('meta-ap-mes',    meta.meta_ap_mes,    formatarBRL);
-    set('meta-pp-mes',    meta.meta_pp_mes,    formatarPP);
+    set('meta-ap-mes', meta.meta_ap_mes, formatarBRL);
+    set('meta-pp-mes', meta.meta_pp_mes, formatarPP);
+    // metas semanais são calculadas após carregar os dados realizados
   } catch {
     console.warn('metas.json não encontrado — usando valores padrão');
   }
@@ -105,6 +138,8 @@ function renderizarTabela(rows) {
     <td>${totalREC}</td>
     <td class="tfoot-pp">${totalPP.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
   </tr>`;
+
+  atualizarMetasSemana(totalAPValor, totalPP);
 }
 
 function carregarDados() {
