@@ -242,15 +242,15 @@ def extrair_ranking_muapd(page):
     try:
         with page.expect_response(
             lambda r: "ranking-tp" in r.url and r.status == 200,
-            timeout=120_000
+            timeout=20_000
         ) as resp_info:
             page.get_by_role("button", name="Filtrar", exact=False).first.click()
             print("  ✓ Filtrar clicado — aguardando resposta do servidor...")
         print(f"  ✓ Resposta recebida: {resp_info.value.url[:80]}")
         time.sleep(3)  # deixa o DOM atualizar
     except Exception as e:
-        print(f"  ⚠ expect_response falhou ({e}) — aguardando 30s como fallback")
-        time.sleep(30)
+        print(f"  ⚠ expect_response falhou ({e}) — aguardando 10s como fallback")
+        time.sleep(10)
 
     screenshot(page, "5_ranking_filtrado")
 
