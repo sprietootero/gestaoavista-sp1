@@ -1,7 +1,90 @@
 Posição,Consultor,AA
-1,Eduardo Mello,0
-2,Gianlucca Venturi,0
-3,Renato Segri,0
-4,Filipe Guarnieri,0
-5,Rodolfo Contini,0
-6,Fernando Bianchi,0
+1,Perfil,
+2,Perfil,
+3,Dashboard,
+4,ContatosPessoa FísicaPessoa Jurídica,
+5,Pessoa Física,
+6,Pessoa Jurídica,
+7,AgendaVer AgendaSalas de Reunião,
+8,Ver Agenda,
+9,Salas de Reunião,
+10,EquipeListaMinha EstruturaRecrutamentos,
+11,Lista,
+12,Minha Estrutura,
+13,Recrutamentos,
+14,ContratosListaPreencher Contrato,
+15,Lista,
+16,Preencher Contrato,
+17,Centro EconômicoPlanejamento AnualMeta MensalGestão de AFsPropostas ComerciaisAssinaturasEmpréstimosResultados,
+18,Planejamento Anual,
+19,Meta Mensal,
+20,Gestão de AFs,
+21,Propostas Comerciais,
+22,Assinaturas,
+23,Empréstimos,
+24,Resultados,
+25,IndicadoresRankingsCompromissos,
+26,Rankings,
+27,Compromissos,
+28,TreinamentosW1 AcademyAulas,
+29,W1 Academy,
+30,Aulas,
+31,Arquivos,
+32,SuporteTicket,
+33,Ticket,
+34,CoachingEducacionalPainel de Gestão,
+35,Educacional,
+36,Painel de Gestão,
+37,"3O consultor Marina Ferreira Nishiya recebeu uma resposta do ticket de suporte referente a (CS/CX - Transferência de clientes). Clique aqui para visualizarO consultor André Machado Tavares recebeu uma resposta referente a uma pendência
+     do contrato Premium (R$ 199,90/mês) do contato Beatriz Brígido de Souza.
+     Clique aqui para visualizarO consultor Rafael André Dias recebeu uma resposta referente a uma pendência
+     do contrato Horizonte do contato EUNICE APARECIDA FURLAN.
+     Clique aqui para visualizarO consultor Rafael André Dias recebeu uma resposta referente a uma pendência
+     do contrato Análise Paga do contato Viviane Almeida da Silva Dimopoulos.
+     Clique aqui para visualizarO consultor Heitor Tebar recebeu uma resposta do ticket de suporte referente a (Financeiro - Pagamento de BP e Assessor). Clique aqui para visualizarO consultor Matheus Prá da Silva Goulart recebeu uma resposta referente a uma pendência
+     do contrato Horizonte do contato Lilia Marcelino Garcia.
+     Clique aqui para visualizarO consultor Luiz Felipe Domingues Valente recebeu uma resposta do ticket de suporte referente a (Financeiro - Pagamento de BP e Assessor). Clique aqui para visualizarO consultor Matheus Prá da Silva Goulart recebeu uma resposta referente a uma pendência
+     do contrato Horizonte do contato Lilia Marcelino Garcia.
+     Clique aqui para visualizarO consultor Marina Ferreira Nishiya recebeu uma resposta referente a uma pendência
+     do contrato Private (R$ 649,90/mês) do contato  Tainã de Souza Martinez.
+     Clique aqui para visualizarO consultor Rafael André Dias recebeu uma resposta referente a uma pendência
+     do contrato Standard (R$ 149,90/mês) do contato EUNICE APARECIDA FURLAN.
+     Clique aqui para visualizarFiltrar",
+38,O consultor Marina Ferreira Nishiya recebeu uma resposta do ticket de suporte referente a (CS/CX - Transferência de clientes). Clique aqui para visualizar,
+39,,
+40,"O consultor André Machado Tavares recebeu uma resposta referente a uma pendência
+     do contrato Premium (R$ 199,90/mês) do contato Beatriz Brígido de Souza.
+     Clique aqui para visualizar",
+41,,
+42,"O consultor Rafael André Dias recebeu uma resposta referente a uma pendência
+     do contrato Horizonte do contato EUNICE APARECIDA FURLAN.
+     Clique aqui para visualizar",
+43,,
+44,"O consultor Rafael André Dias recebeu uma resposta referente a uma pendência
+     do contrato Análise Paga do contato Viviane Almeida da Silva Dimopoulos.
+     Clique aqui para visualizar",
+45,,
+46,O consultor Heitor Tebar recebeu uma resposta do ticket de suporte referente a (Financeiro - Pagamento de BP e Assessor). Clique aqui para visualizar,
+47,,
+48,"O consultor Matheus Prá da Silva Goulart recebeu uma resposta referente a uma pendência
+     do contrato Horizonte do contato Lilia Marcelino Garcia.
+     Clique aqui para visualizar",
+49,,
+50,O consultor Luiz Felipe Domingues Valente recebeu uma resposta do ticket de suporte referente a (Financeiro - Pagamento de BP e Assessor). Clique aqui para visualizar,
+51,,
+52,"O consultor Matheus Prá da Silva Goulart recebeu uma resposta referente a uma pendência
+     do contrato Horizonte do contato Lilia Marcelino Garcia.
+     Clique aqui para visualizar",
+53,,
+54,"O consultor Marina Ferreira Nishiya recebeu uma resposta referente a uma pendência
+     do contrato Private (R$ 649,90/mês) do contato  Tainã de Souza Martinez.
+     Clique aqui para visualizar",
+55,,
+56,"O consultor Rafael André Dias recebeu uma resposta referente a uma pendência
+     do contrato Standard (R$ 149,90/mês) do contato EUNICE APARECIDA FURLAN.
+     Clique aqui para visualizar",
+57,,
+58,Sair,
+59,Tel Party,
+60,APs,
+61,PPs,
