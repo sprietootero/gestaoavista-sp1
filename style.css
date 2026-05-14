@@ -327,6 +327,41 @@ html, body {
   .ranking-grid { grid-template-columns: 1fr; }
 }
 
+/* ── Botão gráfico de barras ── */
+.btn-grafico-barras {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.8);
+  padding: 4px 12px; border-radius: 6px;
+  cursor: pointer; font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.btn-grafico-barras:hover { border-color: var(--w1-teal); color: var(--w1-teal); }
+
+/* ── Abas do ranking ── */
+.ranking-tabs {
+  display: flex; gap: 4px; margin-left: auto;
+}
+.ranking-tab {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.5);
+  padding: 3px 10px; border-radius: 4px;
+  cursor: pointer; font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.ranking-tab.active {
+  background: var(--w1-teal);
+  border-color: var(--w1-teal);
+  color: #fff;
+}
+
+/* ── Modal largo (gráfico de barras) ── */
+.chart-modal-wide {
+  width: min(680px, 95vw);
+}
+
 /* ── Hint no card AP ── */
 .goal-chart-hint {
   font-size: 0.55rem; color: rgba(255,255,255,0.6);

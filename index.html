@@ -26,6 +26,15 @@
     </div>
   </header>
 
+  <!-- Modal gráfico de barras AP por equipe -->
+  <div id="bar-chart-modal" class="chart-modal" onclick="fecharGraficoBarras(event)">
+    <div class="chart-modal-box chart-modal-wide">
+      <h3 class="chart-modal-title">AP Realizado vs Meta por Equipe</h3>
+      <canvas id="bar-chart"></canvas>
+      <button class="chart-close" onclick="fecharGraficoBarras()">Fechar</button>
+    </div>
+  </div>
+
   <!-- Modal do gráfico AP -->
   <div id="chart-modal" class="chart-modal" onclick="fecharGrafico(event)">
     <div class="chart-modal-box">
@@ -65,6 +74,7 @@
       <div class="section-title-bar">
         <span class="section-indicator"></span>
         <h2 class="section-title">RESULTADOS DO MÊS</h2>
+        <button class="btn-grafico-barras" onclick="abrirGraficoBarras()">📊 AP por Equipe</button>
       </div>
 
       <div class="table-wrapper">
@@ -86,11 +96,14 @@
       </div>
     </section>
 
-    <!-- Painel lateral de ranking (visível junto com resultados em telas largas) -->
+    <!-- Painel lateral de ranking -->
     <aside class="ranking-aside">
       <div class="ranking-aside-header">
         <h3>RANKING MUAPD</h3>
-        <span class="ranking-aside-sub">Agendamentos (AA)</span>
+        <div class="ranking-tabs">
+          <button class="ranking-tab active" onclick="trocarAbaRanking('hoje', this)">Hoje</button>
+          <button class="ranking-tab" onclick="trocarAbaRanking('7dias', this)">7 Dias</button>
+        </div>
       </div>
       <div class="ranking-aside-cols">
         <span class="ranking-aside-label">#</span>
@@ -98,6 +111,7 @@
         <span class="ranking-aside-label col-aa">AA</span>
       </div>
       <div id="ranking-aside-body"></div>
+      <div id="ranking-aside-body-7dias" style="display:none"></div>
     </aside>
 
   </main>

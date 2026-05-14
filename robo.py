@@ -7,6 +7,7 @@ import time
 import json
 import re
 import csv
+from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
@@ -161,159 +162,144 @@ def extrair_metas_da_pagina(soup):
     return metas
 
 
-def extrair_ranking_muapd(page):
+def _aplicar_filtros_tel_party(page, data_inicio_str, data_fim_str, sufixo_screenshot):
+    """Aplica filtros de critério e data no formulário Tel Party e aguarda AJAX."""
+    ID_DATA_COMPROMISSO = "tel_party_ranking_form_attribute_of_interest_calendar_event_start_at"
+    ID_DATA_INICIO      = "tel_party_ranking_form_created_at_start_period_date"
+    ID_DATA_FIM         = "tel_party_ranking_form_created_at_end_period_date"
+    CRITERIOS_DESMARCAR = ["ca", "sa", "ea", "af", "cf", "sf", "ef"]
+    ID_AA               = "tel_party_ranking_form_criterias_aa"
+
+    # Desativar "data de compromisso"
+    try:
+        cb = page.locator(f"#{ID_DATA_COMPROMISSO}")
+        if cb.is_checked():
+            cb.click()
+        time.sleep(0.3)
+    except Exception as e:
+        print(f"  ⚠ data de compromisso: {e}")
+
+    # Ajustar intervalo de datas
+    try:
+        page.fill(f"#{ID_DATA_INICIO}", data_inicio_str)
+        page.fill(f"#{ID_DATA_FIM}",    data_fim_str)
+        print(f"  ✓ Datas: {data_inicio_str} → {data_fim_str}")
+    except Exception as e:
+        print(f"  ⚠ Datas: {e}")
+
+    # Desmarcar critérios, manter apenas AA
+    for valor in CRITERIOS_DESMARCAR:
+        try:
+            cb = page.locator(f"#tel_party_ranking_form_criterias_{valor}")
+            if cb.is_checked():
+                cb.click()
+            time.sleep(0.2)
+        except Exception:
+            pass
+    try:
+        cb_aa = page.locator(f"#{ID_AA}")
+        if not cb_aa.is_checked():
+            cb_aa.click()
+        time.sleep(0.2)
+    except Exception as e:
+        print(f"  ⚠ Critério AA: {e}")
+
+    screenshot(page, f"4_{sufixo_screenshot}_filtros")
+
+    # Aplicar filtro e aguardar AJAX
+    try:
+        with page.expect_response(
+            lambda r: "ranking-tp" in r.url and r.status == 200,
+            timeout=20_000
+        ):
+            page.get_by_role("button", name="Filtrar", exact=False).first.click()
+            print("  ✓ Filtrar clicado — aguardando AJAX...")
+        time.sleep(3)
+    except Exception as e:
+        print(f"  ⚠ expect_response: {e} — aguardando 10s")
+        time.sleep(10)
+
+    screenshot(page, f"5_{sufixo_screenshot}_resultado")
+
+
+def _parsear_ranking_da_pagina(page, sufixo_debug):
+    """Extrai e retorna o ranking de SP1 do HTML atual da página."""
+    html = page.content()
+    (DEBUG_DIR / f"ranking_{sufixo_debug}.html").write_text(html, encoding="utf-8")
+    soup = BeautifulSoup(html, "html.parser")
+
+    HEADERS = ["#", "Consultor", "Cargo", "Escritório", "AA", "TOTAL", "MÉDIA", "BP"]
+    ranking = []
+
+    tabela_ranking = None
+    for t in soup.find_all("table"):
+        headers = [th.get_text(strip=True).lower() for th in t.find_all("th")]
+        if any(h in headers for h in ["consultor", "nome", "assessor"]):
+            tabela_ranking = t
+            break
+
+    if not tabela_ranking:
+        print("  ⚠ Tabela de ranking não identificada")
+        return ranking
+
+    thead = tabela_ranking.find("thead")
+    all_trs = thead.find_all("tr") if thead else tabela_ranking.find_all("tr")
+    posicao = 1
+    for tr in all_trs:
+        cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+        if len(cells) < 4:
+            continue
+        row_raw = dict(zip(HEADERS, cells))
+        if row_raw.get("#", "").lower() in ("total", ""):
+            continue
+        escritorio = row_raw.get("Escritório", "")
+        if NOME_ESCRITORIO.lower() not in escritorio.lower():
+            continue
+        ranking.append({
+            "Posição":   posicao,
+            "Consultor": row_raw.get("Consultor", ""),
+            "AA":        row_raw.get("AA", "0"),
+        })
+        posicao += 1
+
+    print(f"  → {len(ranking)} entradas ({sufixo_debug})")
+    if ranking:
+        print(f"  → Top 3: {[r['Consultor'] for r in ranking[:3]]}")
+    return ranking
+
+
+def extrair_rankings_muapd(page):
+    """Extrai dois rankings: hoje e últimos 7 dias."""
+    hoje      = datetime.now()
+    sete_dias = hoje - timedelta(days=7)
+    fmt       = lambda d: d.strftime("%d/%m/%Y")
+
     print("  → Navegando para rankings...")
     page.goto(URL_RANKING, wait_until="networkidle")
     time.sleep(3)
     screenshot(page, "3_ranking_inicial")
 
-    # Clica na aba "Tel Party" (ranking de AA/MUAPD)
-    clicou_tab = False
-    for seletor in [
-        "text=Tel Party",
-        "a:has-text('Tel Party')",
-        "button:has-text('Tel Party')",
-        "[href*='tel']",
-    ]:
+    # Clicar na aba Tel Party
+    for seletor in ["text=Tel Party", "a:has-text('Tel Party')", "[href*='tel']"]:
         try:
             page.locator(seletor).first.click()
-            print(f"  ✓ Clicou na aba Tel Party via: {seletor}")
-            clicou_tab = True
+            print(f"  ✓ Aba Tel Party: {seletor}")
             time.sleep(3)
             break
         except Exception:
             pass
 
-    if not clicou_tab:
-        print("  ⚠ Não encontrou aba Tel Party — tentando sem clicar")
+    # ── Ranking HOJE ──
+    print("\n  [ Ranking HOJE ]")
+    _aplicar_filtros_tel_party(page, fmt(hoje), fmt(hoje), "hoje")
+    ranking_hoje = _parsear_ranking_da_pagina(page, "hoje")
 
-    screenshot(page, "4_ranking_tel_party")
+    # ── Ranking 7 DIAS ──
+    print("\n  [ Ranking 7 DIAS ]")
+    _aplicar_filtros_tel_party(page, fmt(sete_dias), fmt(hoje), "7dias")
+    ranking_7dias = _parsear_ranking_da_pagina(page, "7dias")
 
-    # IDs exatos extraídos do HTML do formulário Tel Party
-    ID_DATA_COMPROMISSO = "tel_party_ranking_form_attribute_of_interest_calendar_event_start_at"
-    # Critérios: manter apenas AA, desmarcar CA, SA, EA, AF, CF, SF, EF
-    CRITERIOS_DESMARCAR = ["ca", "sa", "ea", "af", "cf", "sf", "ef"]
-    ID_AA               = "tel_party_ranking_form_criterias_aa"
-
-    # Passo 1: desativar "data de compromisso" (usar ID exato do campo)
-    print("  → Desativando 'data de compromisso'...")
-    try:
-        cb = page.locator(f"#{ID_DATA_COMPROMISSO}")
-        if cb.is_checked():
-            cb.click()
-            print("  ✓ 'data de compromisso' desmarcado")
-        else:
-            print("  ✓ 'data de compromisso' já desmarcado")
-        time.sleep(0.5)
-    except Exception as e:
-        print(f"  ⚠ 'data de compromisso': {e}")
-
-    screenshot(page, "4b_data_compromisso")
-
-    # Passo 2: desmarcar critérios, manter apenas AA
-    # (Não filtramos por escritório no formulário — filtramos em Python pela coluna 'escritório')
-    print("  → Ajustando critérios (apenas AA)...")
-    for valor in CRITERIOS_DESMARCAR:
-        id_cb = f"tel_party_ranking_form_criterias_{valor}"
-        try:
-            cb = page.locator(f"#{id_cb}")
-            if cb.is_checked():
-                cb.click()
-                print(f"  ✓ Critério '{valor.upper()}' desmarcado")
-            time.sleep(0.3)
-        except Exception as e:
-            print(f"  ⚠ Critério '{valor}': {e}")
-
-    try:
-        cb_aa = page.locator(f"#{ID_AA}")
-        if not cb_aa.is_checked():
-            cb_aa.click()
-            print("  ✓ 'AA' marcado")
-        else:
-            print("  ✓ 'AA' já marcado")
-        time.sleep(0.3)
-    except Exception as e:
-        print(f"  ⚠ Critério AA: {e}")
-
-    screenshot(page, "4c_criterios_ajustados")
-
-    # Passo 3: aplicar filtro e aguardar resposta AJAX
-    print("  → Aplicando filtro e aguardando AJAX...")
-    try:
-        with page.expect_response(
-            lambda r: "ranking-tp" in r.url and r.status == 200,
-            timeout=20_000
-        ) as resp_info:
-            page.get_by_role("button", name="Filtrar", exact=False).first.click()
-            print("  ✓ Filtrar clicado — aguardando resposta do servidor...")
-        print(f"  ✓ Resposta recebida: {resp_info.value.url[:80]}")
-        time.sleep(3)  # deixa o DOM atualizar
-    except Exception as e:
-        print(f"  ⚠ expect_response falhou ({e}) — aguardando 10s como fallback")
-        time.sleep(10)
-
-    screenshot(page, "5_ranking_filtrado")
-
-    html = page.content()
-    (DEBUG_DIR / "ranking.html").write_text(html, encoding="utf-8")
-    soup = BeautifulSoup(html, "html.parser")
-
-    ranking = []
-
-    todas_tabelas = soup.find_all("table")
-    print(f"  → {len(todas_tabelas)} tabelas encontradas na página de ranking")
-
-    tabela_ranking = None
-    for t in todas_tabelas:
-        headers = [th.get_text(strip=True).lower() for th in t.find_all("th")]
-        if any(h in headers for h in ["consultor", "nome", "assessor"]):
-            tabela_ranking = t
-            print(f"  ✓ Tabela de ranking identificada: colunas = {headers}")
-            break
-
-    if tabela_ranking:
-        # A tabela tem 2 linhas de thead com headers reais + linhas de dados como <td> dentro do <thead>
-        # Linha 1: #, Consultor, Cargo, Escritório, Próprios(colspan=4)
-        # Linha 2: AA, TOTAL, MÉDIA, BP
-        # Dados: todas as <tr> do thead que contêm <td> (não <th>)
-        thead = tabela_ranking.find("thead")
-        all_trs = thead.find_all("tr") if thead else tabela_ranking.find_all("tr")
-
-        # Monta headers corretos combinando as 2 primeiras linhas
-        HEADERS = ["#", "Consultor", "Cargo", "Escritório", "AA", "TOTAL", "MÉDIA", "BP"]
-
-        posicao = 1
-        for tr in all_trs:
-            cells = [td.get_text(strip=True) for td in tr.find_all("td")]
-            if len(cells) < 4:
-                continue  # linha de header ou vazia
-            row_raw = dict(zip(HEADERS, cells))
-
-            # Pula linha de totais
-            if row_raw.get("#", "").lower() in ("total", ""):
-                continue
-
-            # Filtra apenas consultores do escritório SP1
-            escritorio = row_raw.get("Escritório", "")
-            if NOME_ESCRITORIO.lower() not in escritorio.lower():
-                continue
-
-            consultor = row_raw.get("Consultor", "")
-            aa_val    = row_raw.get("AA", "0")
-            ranking.append({
-                "Posição":   posicao,
-                "Consultor": consultor,
-                "AA":        aa_val,
-            })
-            posicao += 1
-    else:
-        print("  ⚠ Tabela de ranking não identificada")
-
-    print(f"  → {len(ranking)} entradas no ranking de SP1")
-    if ranking:
-        print(f"  → Primeiros: {[r['Consultor'] for r in ranking[:5]]}")
-
-    return ranking
+    return ranking_hoje, ranking_7dias
 
 
 def montar_linha_lider(raw, nome_exibicao):
@@ -330,6 +316,7 @@ def montar_linha_lider(raw, nome_exibicao):
         "AF":        val(["AF"]),
         "AP":        val(["AP"]),
         "AP Valor":  val(["AP [R$]", "AP Valor", "AP[R$]", "AP R$"]),
+        "Meta AP":   val(["Meta AP [R$]", "Meta AP[R$]", "Meta AP R$"]),
         "REC":       val(["Recs", "REC", "Rec"]),
         "PP Total":  val(["Total", "PP Total", "PPs", "PP"]),
     }
@@ -380,7 +367,7 @@ def main():
 
         fazer_login(page, conta["email"], conta["senha"])
         dados_brutos, metas = extrair_tabela_economia(page)
-        ranking = extrair_ranking_muapd(page)
+        ranking_hoje, ranking_7dias = extrair_rankings_muapd(page)
 
         browser.close()
 
@@ -390,11 +377,12 @@ def main():
         nome_lider = next((l for l in LIDERES if any(p.lower() in consultor.lower() for p in l.split())), consultor)
         linhas.append(montar_linha_lider(raw, nome_lider))
 
-    campos_dados   = ["Equipe", "AA", "AF", "AP", "AP Valor", "REC", "PP Total"]
-    campos_ranking = list(ranking[0].keys()) if ranking else ["Posição", "Consultor", "AA"]
+    campos_dados   = ["Equipe", "AA", "AF", "AP", "AP Valor", "Meta AP", "REC", "PP Total"]
+    campos_ranking = ["Posição", "Consultor", "AA"]
 
-    salvar_csv(linhas,   "dados_extraidos.csv", campos_dados)
-    salvar_csv(ranking,  "ranking_muapd.csv",   campos_ranking)
+    salvar_csv(linhas,         "dados_extraidos.csv",  campos_dados)
+    salvar_csv(ranking_hoje,   "ranking_muapd.csv",    campos_ranking)
+    salvar_csv(ranking_7dias,  "ranking_7dias.csv",    campos_ranking)
     salvar_metas(metas)
 
     print()

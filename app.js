@@ -8,14 +8,18 @@ const CACHE_BUST = () => '?t=' + Date.now();
 const tableBody    = document.getElementById('table-body');
 const tableFoot    = document.getElementById('table-footer');
 const rankingAside = document.getElementById('ranking-aside-body');
+const ranking7dias = document.getElementById('ranking-aside-body-7dias');
 const syncTime     = document.getElementById('sync-time');
 
-// ── Metas ──────────────────────────────────────
+// ── Estado ─────────────────────────────────────
 let metaAPMes = 0;
 let metaPPMes = 0;
 let totalAPRealizadoAtual = 0;
-let apChart = null;
+let dadosEquipes = [];   // para o gráfico de barras
+let apChart    = null;
+let barChart   = null;
 
+// ── Metas semanais ─────────────────────────────
 function semanaDoMes() {
   const dia = new Date().getDate();
   if (dia <= 7)  return 1;
@@ -44,8 +48,8 @@ function atualizarMetasSemana(totalAPValor, totalPP) {
   }
 }
 
+// ── Formatação ─────────────────────────────────
 function formatarBRL(valor) {
-  // Aceita número JS direto ou string no formato brasileiro "R$ 36.315,44"
   const num = typeof valor === 'number'
     ? valor
     : parseFloat(String(valor).replace(/R\$\s*/g, '').replace(/\./g, '').replace(',', '.'));
@@ -54,7 +58,6 @@ function formatarBRL(valor) {
 }
 
 function formatarPP(valor) {
-  // Aceita número JS direto ou string "406,9556" / "3.700"
   const num = typeof valor === 'number'
     ? valor
     : parseFloat(String(valor).replace(/\./g, '').replace(',', '.'));
@@ -62,28 +65,6 @@ function formatarPP(valor) {
   return num.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' PPs';
 }
 
-async function carregarMetas() {
-  try {
-    const res  = await fetch('metas.json' + CACHE_BUST());
-    const meta = await res.json();
-
-    metaAPMes = parseFloat(meta.meta_ap_mes) || 0;
-    metaPPMes = parseFloat(meta.meta_pp_mes) || 0;
-
-    const set = (id, val, fmt) => {
-      const el = document.getElementById(id);
-      if (el && val) el.textContent = fmt(val);
-    };
-
-    set('meta-ap-mes', meta.meta_ap_mes, formatarBRL);
-    set('meta-pp-mes', meta.meta_pp_mes, formatarPP);
-    // metas semanais são calculadas após carregar os dados realizados
-  } catch {
-    console.warn('metas.json não encontrado — usando valores padrão');
-  }
-}
-
-// ── Tabela de resultados ───────────────────────
 function parseBRL(str) {
   if (!str) return 0;
   return parseFloat(String(str).replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
@@ -94,27 +75,41 @@ function parseNum(str) {
   return parseFloat(String(str).replace(',', '.')) || 0;
 }
 
+// ── Metas ──────────────────────────────────────
+async function carregarMetas() {
+  try {
+    const res  = await fetch('metas.json' + CACHE_BUST());
+    const meta = await res.json();
+    metaAPMes = parseFloat(meta.meta_ap_mes) || 0;
+    metaPPMes = parseFloat(meta.meta_pp_mes) || 0;
+    const set = (id, val, fmt) => {
+      const el = document.getElementById(id);
+      if (el && val) el.textContent = fmt(val);
+    };
+    set('meta-ap-mes', meta.meta_ap_mes, formatarBRL);
+    set('meta-pp-mes', meta.meta_pp_mes, formatarPP);
+  } catch {
+    console.warn('metas.json não encontrado');
+  }
+}
+
+// ── Tabela de resultados ───────────────────────
 function renderizarTabela(rows) {
-  // Filtra linhas vazias e ordena por AP Valor decrescente
   const dados = rows
     .filter(r => r['Equipe'] || r['Consultor/Nível'])
-    .sort((a, b) => {
-      const va = parseBRL(a['AP Valor'] || a['AP [R$]'] || '0');
-      const vb = parseBRL(b['AP Valor'] || b['AP [R$]'] || '0');
-      return vb - va;
-    });
+    .sort((a, b) => parseBRL(b['AP Valor'] || '0') - parseBRL(a['AP Valor'] || '0'));
 
   let totalAA = 0, totalAF = 0, totalAP = 0;
   let totalAPValor = 0, totalREC = 0, totalPP = 0;
 
   tableBody.innerHTML = dados.map(row => {
-    const equipe  = row['Equipe']    || row['Consultor/Nível'] || '–';
-    const aa      = row['AA']        || '0';
-    const af      = row['AF']        || '0';
-    const ap      = row['AP']        || '0';
-    const apValor = row['AP Valor']  || row['AP [R$]'] || 'R$ 0,00';
-    const rec     = row['REC']       || row['Recs']    || '0';
-    const pp      = row['PP Total']  || row['Total']   || '0,00';
+    const equipe  = row['Equipe']   || row['Consultor/Nível'] || '–';
+    const aa      = row['AA']       || '0';
+    const af      = row['AF']       || '0';
+    const ap      = row['AP']       || '0';
+    const apValor = row['AP Valor'] || row['AP [R$]'] || 'R$ 0,00';
+    const rec     = row['REC']      || row['Recs']    || '0';
+    const pp      = row['PP Total'] || row['Total']   || '0,00';
 
     totalAA      += parseNum(aa);
     totalAF      += parseNum(af);
@@ -145,6 +140,7 @@ function renderizarTabela(rows) {
   </tr>`;
 
   totalAPRealizadoAtual = totalAPValor;
+  dadosEquipes = dados;
   atualizarMetasSemana(totalAPValor, totalPP);
 }
 
@@ -159,10 +155,9 @@ function carregarDados() {
 // ── Ranking MUAPD ──────────────────────────────
 const MEDALHAS = ['🥇', '🥈', '🥉'];
 
-function renderizarRanking(rows) {
+function renderizarListaRanking(container, rows) {
   const dados = rows.filter(r => r['Consultor'] || r['Consultor/Nível']);
-
-  rankingAside.innerHTML = dados.map((row, i) => {
+  container.innerHTML = dados.map((row, i) => {
     const nome = row['Consultor'] || row['Consultor/Nível'] || '–';
     const aa   = row['AA'] || '0';
     const pos  = i < 3 ? `<span class="rank-pos medal">${MEDALHAS[i]}</span>`
@@ -176,16 +171,36 @@ function renderizarRanking(rows) {
   }).join('');
 }
 
+function renderizarRanking(rows) {
+  renderizarListaRanking(rankingAside, rows);
+}
+
 function carregarRanking() {
   Papa.parse('ranking_muapd.csv' + CACHE_BUST(), {
     download: true, header: true, skipEmptyLines: true,
-    complete: r  => renderizarRanking(r.data),
-    error:    ()  => console.warn('ranking_muapd.csv não encontrado'),
+    complete: r => renderizarListaRanking(rankingAside, r.data),
+    error:    () => console.warn('ranking_muapd.csv não encontrado'),
+  });
+  Papa.parse('ranking_7dias.csv' + CACHE_BUST(), {
+    download: true, header: true, skipEmptyLines: true,
+    complete: r => renderizarListaRanking(ranking7dias, r.data),
+    error:    () => console.warn('ranking_7dias.csv não encontrado'),
   });
 }
 
+function trocarAbaRanking(aba, btn) {
+  document.querySelectorAll('.ranking-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (aba === 'hoje') {
+    rankingAside.style.display = '';
+    ranking7dias.style.display = 'none';
+  } else {
+    rankingAside.style.display = 'none';
+    ranking7dias.style.display = '';
+  }
+}
 
-// ── Timestamp de sincronização ─────────────────
+// ── Timestamp ──────────────────────────────────
 function atualizarSyncTime() {
   const agora = new Date();
   syncTime.textContent = 'Sincronizado: ' +
@@ -193,7 +208,7 @@ function atualizarSyncTime() {
     agora.toLocaleTimeString('pt-BR');
 }
 
-// ── Recarregar (botão Atualizar) ───────────────
+// ── Recarregar ─────────────────────────────────
 function recarregarDados() {
   carregarMetas();
   carregarDados();
@@ -201,26 +216,22 @@ function recarregarDados() {
   atualizarSyncTime();
 }
 
-// ── Gráfico AP do Mês ──────────────────────────
+// ── Gráfico de pizza AP do Mês ─────────────────
 function abrirGrafico() {
-  const modal = document.getElementById('chart-modal');
-  modal.classList.add('active');
-
+  document.getElementById('chart-modal').classList.add('active');
   const realizado = totalAPRealizadoAtual;
   const faltante  = Math.max(0, metaAPMes - realizado);
   const pct       = metaAPMes > 0 ? ((realizado / metaAPMes) * 100).toFixed(1) : 0;
-
   const ctx = document.getElementById('ap-chart').getContext('2d');
   if (apChart) apChart.destroy();
-
   apChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels: ['Realizado', 'Faltante'],
       datasets: [{
         data: realizado + faltante > 0 ? [realizado, faltante] : [0, 1],
-        backgroundColor: ['#00c9a7', '#1e2a3a'],
-        borderColor:     ['#00c9a7', '#2d3f55'],
+        backgroundColor: ['#00C2B8', '#1e2a3a'],
+        borderColor:     ['#00C2B8', '#2d3f55'],
         borderWidth: 2,
       }],
     },
@@ -228,11 +239,7 @@ function abrirGrafico() {
       cutout: '70%',
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => ' ' + formatarBRL(ctx.raw),
-          },
-        },
+        tooltip: { callbacks: { label: c => ' ' + formatarBRL(c.raw) } },
       },
     },
     plugins: [{
@@ -240,8 +247,8 @@ function abrirGrafico() {
       beforeDraw(chart) {
         const { ctx, width, height } = chart;
         ctx.save();
-        ctx.font = `bold ${Math.round(width / 8)}px Inter, sans-serif`;
-        ctx.fillStyle = '#00c9a7';
+        ctx.font = `bold ${Math.round(width / 8)}px Segoe UI, sans-serif`;
+        ctx.fillStyle = '#00C2B8';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(`${pct}%`, width / 2, height / 2);
@@ -249,9 +256,8 @@ function abrirGrafico() {
       },
     }],
   });
-
   document.getElementById('chart-legend').innerHTML = `
-    <div class="legend-item"><span class="legend-dot" style="background:#00c9a7"></span>
+    <div class="legend-item"><span class="legend-dot" style="background:#00C2B8"></span>
       Realizado: <strong>${formatarBRL(realizado)}</strong></div>
     <div class="legend-item"><span class="legend-dot" style="background:#1e2a3a"></span>
       Faltante: <strong>${formatarBRL(faltante)}</strong></div>
@@ -264,8 +270,75 @@ function fecharGrafico(event) {
   document.getElementById('chart-modal').classList.remove('active');
 }
 
+// ── Gráfico de barras AP por Equipe ────────────
+function abrirGraficoBarras() {
+  document.getElementById('bar-chart-modal').classList.add('active');
+  const dados = dadosEquipes.filter(r => r['Equipe']);
+  const labels    = dados.map(r => r['Equipe']);
+  const realizado = dados.map(r => parseBRL(r['AP Valor'] || '0'));
+  const meta      = dados.map(r => parseBRL(r['Meta AP']  || '0'));
+
+  const ctx = document.getElementById('bar-chart').getContext('2d');
+  if (barChart) barChart.destroy();
+
+  barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Realizado',
+          data: realizado,
+          backgroundColor: '#00C2B8',
+          borderRadius: 4,
+        },
+        {
+          label: 'Meta',
+          data: meta,
+          backgroundColor: 'rgba(255,255,255,0.15)',
+          borderColor: 'rgba(255,255,255,0.4)',
+          borderWidth: 1,
+          borderRadius: 4,
+        },
+      ],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: '#fff', font: { size: 12 } },
+        },
+        tooltip: {
+          callbacks: {
+            label: c => ` ${c.dataset.label}: ${formatarBRL(c.raw)}`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: 'rgba(255,255,255,0.6)',
+            callback: v => 'R$ ' + (v / 1000).toFixed(0) + 'k',
+          },
+          grid: { color: 'rgba(255,255,255,0.08)' },
+        },
+        y: {
+          ticks: { color: '#fff', font: { size: 11 } },
+          grid: { display: false },
+        },
+      },
+    },
+  });
+}
+
+function fecharGraficoBarras(event) {
+  if (event && event.target !== document.getElementById('bar-chart-modal')) return;
+  document.getElementById('bar-chart-modal').classList.remove('active');
+}
+
 // ── Init ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   recarregarDados();
-  setInterval(recarregarDados, 30 * 60 * 1000); // recarrega dados a cada 30 min
+  setInterval(recarregarDados, 30 * 60 * 1000);
 });
