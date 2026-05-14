@@ -50,4 +50,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add dados_extraidos.csv ranking_muapd.csv ranking_7dias.csv metas.json
           git diff --cached --quiet || git commit -m "dados: atualização automática $(date -u '+%d/%m/%Y %H:%M') UTC"
+          git pull --rebase origin main
           git push
