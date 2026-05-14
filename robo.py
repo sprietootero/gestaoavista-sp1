@@ -189,71 +189,66 @@ def extrair_ranking_muapd(page):
 
     screenshot(page, "4_ranking_tel_party")
 
-    # Passo 1: desativar "data de compromisso" (segunda caixa de filtro)
+    # IDs exatos do formulário Tel Party (extraídos do HTML da página)
+    ID_DATA_COMPROMISSO = "tel_party_ranking_form_attribute_of_interest_calendar_event_start_at"
+    ID_OFFICE_SP1       = "tel_party_ranking_form_offices_1061"
+    # Critérios: manter apenas AA, desmarcar os demais
+    CRITERIOS_DESMARCAR = ["ca", "sa", "ea", "af", "cf", "sf", "ef"]
+    ID_AA               = "tel_party_ranking_form_criterias_aa"
+
+    # Passo 1: desativar "data de compromisso"
     print("  → Desativando 'data de compromisso'...")
     try:
-        cb = page.get_by_label("data de compromisso", exact=False).first
+        cb = page.locator(f"#{ID_DATA_COMPROMISSO}")
         if cb.is_checked():
             cb.click()
             print("  ✓ 'data de compromisso' desmarcado")
         else:
             print("  ✓ 'data de compromisso' já desmarcado")
-        time.sleep(1)
-    except Exception:
-        # Tenta pelo texto visível
-        try:
-            page.get_by_text("data de compromisso", exact=False).first.click()
-            print("  ✓ 'data de compromisso' clicado via texto")
-            time.sleep(1)
-        except Exception as e:
-            print(f"  ⚠ Não encontrou 'data de compromisso': {e}")
+        time.sleep(0.5)
+    except Exception as e:
+        print(f"  ⚠ Não encontrou 'data de compromisso': {e}")
 
     screenshot(page, "4b_data_compromisso")
 
     # Passo 2: desmarcar todos os escritórios, selecionar apenas SP1
-    print("  → Filtrando escritório...")
+    print("  → Filtrando escritório (apenas SP1)...")
     try:
         page.get_by_text("Selecionar todos os escritórios", exact=False).first.click()
         time.sleep(1)
-        page.get_by_text(NOME_ESCRITORIO, exact=True).first.click()
-        print(f"  ✓ Escritório selecionado: '{NOME_ESCRITORIO}'")
-        time.sleep(1)
+        cb_sp1 = page.locator(f"#{ID_OFFICE_SP1}")
+        cb_sp1.click()
+        print(f"  ✓ Escritório SP1 selecionado (#{ID_OFFICE_SP1})")
+        time.sleep(0.5)
     except Exception as e:
         print(f"  ⚠ Filtro escritório falhou: {e}")
 
     screenshot(page, "4c_escritorio_selecionado")
 
-    # Passo 3: em "critérios", desmarcar APs e PPs, manter apenas AA
+    # Passo 3: desmarcar critérios, manter apenas AA
     print("  → Ajustando critérios (apenas AA)...")
-    for criterio in ["APs", "PPs"]:
+    for valor in CRITERIOS_DESMARCAR:
+        id_cb = f"tel_party_ranking_form_criterias_{valor}"
         try:
-            cb = page.get_by_label(criterio, exact=True).first
+            cb = page.locator(f"#{id_cb}")
             if cb.is_checked():
                 cb.click()
-                print(f"  ✓ '{criterio}' desmarcado")
-            else:
-                print(f"  ✓ '{criterio}' já desmarcado")
-            time.sleep(0.5)
-        except Exception:
-            try:
-                # Tenta encontrar checkbox próximo ao texto
-                page.locator(f"label:has-text('{criterio}')").first.click()
-                print(f"  ✓ '{criterio}' clicado via label")
-                time.sleep(0.5)
-            except Exception as e:
-                print(f"  ⚠ Não encontrou critério '{criterio}': {e}")
+                print(f"  ✓ Critério '{valor.upper()}' desmarcado")
+            time.sleep(0.3)
+        except Exception as e:
+            print(f"  ⚠ Critério '{valor}': {e}")
 
-    # Garante que AA está marcado
+    # Garante AA marcado
     try:
-        cb_aa = page.get_by_label("AA", exact=True).first
+        cb_aa = page.locator(f"#{ID_AA}")
         if not cb_aa.is_checked():
             cb_aa.click()
             print("  ✓ 'AA' marcado")
         else:
             print("  ✓ 'AA' já marcado")
-        time.sleep(0.5)
+        time.sleep(0.3)
     except Exception as e:
-        print(f"  ⚠ Não encontrou critério 'AA': {e}")
+        print(f"  ⚠ Critério AA: {e}")
 
     screenshot(page, "4d_criterios_ajustados")
 
