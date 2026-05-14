@@ -374,7 +374,7 @@ def main():
     print("=" * 50)
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=False)  # False = visível para debug
+        browser = pw.chromium.launch(headless=True)
         page = browser.new_page()
         page.set_viewport_size({"width": 1400, "height": 900})
 
