@@ -252,5 +252,5 @@ function recarregarDados() {
 document.addEventListener('DOMContentLoaded', () => {
   recarregarDados();
   iniciarCiclo();
-  setInterval(recarregarDados, 5 * 60 * 1000); // recarrega dados a cada 5 min
+  setInterval(recarregarDados, 30 * 60 * 1000); // recarrega dados a cada 30 min
 });
