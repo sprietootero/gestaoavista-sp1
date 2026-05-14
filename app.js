@@ -108,7 +108,6 @@ function renderizarTabela(rows) {
     .sort((a, b) => {
       const va = parseBRL(a['AP Valor'] || a['AP [R$]'] || '0');
       const vb = parseBRL(b['AP Valor'] || b['AP [R$]'] || '0');
-      console.log(`Sort: ${a['Equipe']} AP=${va} | ${b['Equipe']} AP=${vb}`);
       return vb - va;
     });
 

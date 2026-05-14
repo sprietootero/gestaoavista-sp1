@@ -189,17 +189,81 @@ def extrair_ranking_muapd(page):
 
     screenshot(page, "4_ranking_tel_party")
 
-    # Desmarcar todos, selecionar SP1, filtrar
+    # Passo 1: desativar "data de compromisso" (segunda caixa de filtro)
+    print("  → Desativando 'data de compromisso'...")
+    try:
+        cb = page.get_by_label("data de compromisso", exact=False).first
+        if cb.is_checked():
+            cb.click()
+            print("  ✓ 'data de compromisso' desmarcado")
+        else:
+            print("  ✓ 'data de compromisso' já desmarcado")
+        time.sleep(1)
+    except Exception:
+        # Tenta pelo texto visível
+        try:
+            page.get_by_text("data de compromisso", exact=False).first.click()
+            print("  ✓ 'data de compromisso' clicado via texto")
+            time.sleep(1)
+        except Exception as e:
+            print(f"  ⚠ Não encontrou 'data de compromisso': {e}")
+
+    screenshot(page, "4b_data_compromisso")
+
+    # Passo 2: desmarcar todos os escritórios, selecionar apenas SP1
+    print("  → Filtrando escritório...")
     try:
         page.get_by_text("Selecionar todos os escritórios", exact=False).first.click()
         time.sleep(1)
         page.get_by_text(NOME_ESCRITORIO, exact=True).first.click()
+        print(f"  ✓ Escritório selecionado: '{NOME_ESCRITORIO}'")
         time.sleep(1)
+    except Exception as e:
+        print(f"  ⚠ Filtro escritório falhou: {e}")
+
+    screenshot(page, "4c_escritorio_selecionado")
+
+    # Passo 3: em "critérios", desmarcar APs e PPs, manter apenas AA
+    print("  → Ajustando critérios (apenas AA)...")
+    for criterio in ["APs", "PPs"]:
+        try:
+            cb = page.get_by_label(criterio, exact=True).first
+            if cb.is_checked():
+                cb.click()
+                print(f"  ✓ '{criterio}' desmarcado")
+            else:
+                print(f"  ✓ '{criterio}' já desmarcado")
+            time.sleep(0.5)
+        except Exception:
+            try:
+                # Tenta encontrar checkbox próximo ao texto
+                page.locator(f"label:has-text('{criterio}')").first.click()
+                print(f"  ✓ '{criterio}' clicado via label")
+                time.sleep(0.5)
+            except Exception as e:
+                print(f"  ⚠ Não encontrou critério '{criterio}': {e}")
+
+    # Garante que AA está marcado
+    try:
+        cb_aa = page.get_by_label("AA", exact=True).first
+        if not cb_aa.is_checked():
+            cb_aa.click()
+            print("  ✓ 'AA' marcado")
+        else:
+            print("  ✓ 'AA' já marcado")
+        time.sleep(0.5)
+    except Exception as e:
+        print(f"  ⚠ Não encontrou critério 'AA': {e}")
+
+    screenshot(page, "4d_criterios_ajustados")
+
+    # Passo 4: aplicar filtro
+    try:
         page.get_by_role("button", name="Filtrar", exact=False).first.click()
-        print(f"  ✓ Filtro ranking: apenas '{NOME_ESCRITORIO}'")
+        print("  ✓ Filtro aplicado")
         time.sleep(3)
     except Exception as e:
-        print(f"  ⚠ Filtro ranking falhou: {e}")
+        print(f"  ⚠ Botão Filtrar não encontrado: {e}")
 
     # Polling: verifica a cada 5s se a tabela carregou (até 90s)
     print("  → Aguardando dados do ranking (até 90s)...")
