@@ -344,8 +344,8 @@ html, body {
 .chart-modal.active { display: flex; }
 
 .chart-modal-box {
-  background: var(--w1-navy);
-  border: 1px solid var(--w1-border);
+  background: var(--w1-dark);
+  border: 1px solid var(--w1-gray-border);
   border-radius: 12px;
   padding: 28px 32px;
   width: min(420px, 90vw);
@@ -373,7 +373,7 @@ html, body {
 .chart-close {
   margin-top: 20px;
   background: transparent;
-  border: 1px solid var(--w1-border);
+  border: 1px solid var(--w1-gray-border);
   color: rgba(255,255,255,0.6);
   padding: 6px 20px; border-radius: 6px;
   cursor: pointer; font-size: 0.8rem;
