@@ -52,14 +52,20 @@ function atualizarMetasSemana(totalAPValor, totalPP) {
 }
 
 function formatarBRL(valor) {
-  const num = parseFloat(String(valor).replace(/\./g, '').replace(',', '.'));
-  if (isNaN(num)) return valor;
+  // Aceita número JS direto ou string no formato brasileiro "R$ 36.315,44"
+  const num = typeof valor === 'number'
+    ? valor
+    : parseFloat(String(valor).replace(/R\$\s*/g, '').replace(/\./g, '').replace(',', '.'));
+  if (isNaN(num)) return String(valor);
   return 'R$ ' + num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function formatarPP(valor) {
-  const num = parseFloat(String(valor).replace(/\./g, '').replace(',', '.'));
-  if (isNaN(num)) return valor;
+  // Aceita número JS direto ou string "406,9556" / "3.700"
+  const num = typeof valor === 'number'
+    ? valor
+    : parseFloat(String(valor).replace(/\./g, '').replace(',', '.'));
+  if (isNaN(num)) return String(valor);
   return num.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' PPs';
 }
 
