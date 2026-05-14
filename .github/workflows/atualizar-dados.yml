@@ -22,10 +22,18 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: Instalar dependências
+      - name: Instalar dependências do sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+            libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
+            libxrandr2 libgbm1 libasound2t64 libpango-1.0-0 libcairo2
+
+      - name: Instalar dependências Python e browser
         run: |
           pip install -r requirements.txt
-          playwright install chromium --with-deps
+          playwright install chromium
 
       - name: Rodar robô
         env:
