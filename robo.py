@@ -179,13 +179,20 @@ def _aplicar_filtros_tel_party(page, data_inicio_str, data_fim_str, sufixo_scree
     except Exception as e:
         print(f"  ⚠ data de compromisso: {e}")
 
-    # Ajustar intervalo de datas
-    try:
-        page.fill(f"#{ID_DATA_INICIO}", data_inicio_str)
-        page.fill(f"#{ID_DATA_FIM}",    data_fim_str)
-        print(f"  ✓ Datas: {data_inicio_str} → {data_fim_str}")
-    except Exception as e:
-        print(f"  ⚠ Datas: {e}")
+    # Ajustar intervalo de datas via triple-click + type (datepicker Bootstrap)
+    def preencher_data(campo_id, valor):
+        try:
+            inp = page.locator(f"#{campo_id}")
+            inp.click(click_count=3)  # seleciona tudo
+            page.keyboard.type(valor)
+            page.keyboard.press("Tab")
+            time.sleep(0.3)
+        except Exception as e:
+            print(f"  ⚠ Data {campo_id}: {e}")
+
+    preencher_data(ID_DATA_INICIO, data_inicio_str)
+    preencher_data(ID_DATA_FIM,    data_fim_str)
+    print(f"  ✓ Datas: {data_inicio_str} → {data_fim_str}")
 
     # Desmarcar critérios, manter apenas AA
     for valor in CRITERIOS_DESMARCAR:
@@ -294,8 +301,17 @@ def extrair_rankings_muapd(page):
     _aplicar_filtros_tel_party(page, fmt(hoje), fmt(hoje), "hoje")
     ranking_hoje = _parsear_ranking_da_pagina(page, "hoje")
 
-    # ── Ranking 7 DIAS ──
+    # ── Ranking 7 DIAS — renavelga para estado limpo ──
     print("\n  [ Ranking 7 DIAS ]")
+    page.goto(URL_RANKING, wait_until="networkidle")
+    time.sleep(2)
+    for seletor in ["text=Tel Party", "a:has-text('Tel Party')", "[href*='tel']"]:
+        try:
+            page.locator(seletor).first.click()
+            time.sleep(2)
+            break
+        except Exception:
+            pass
     _aplicar_filtros_tel_party(page, fmt(sete_dias), fmt(hoje), "7dias")
     ranking_7dias = _parsear_ranking_da_pagina(page, "7dias")
 
