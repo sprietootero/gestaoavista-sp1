@@ -320,6 +320,11 @@ def _parsear_top10_ap(html):
 
         row_raw = dict(zip(headers, cells)) if headers else {}
 
+        # Filtrar pelo escritório atual do consultor
+        escritorio = row_raw.get("Escritório atual do consultor", "")
+        if escritorio and NOME_ESCRITORIO.lower() not in escritorio.lower():
+            continue
+
         # Consultor: coluna explícita ou índice 2 (padrão: #, ID, Consultor, ...)
         consultor = (row_raw.get("Consultor") or row_raw.get("Nome") or
                      row_raw.get("Assessor") or
