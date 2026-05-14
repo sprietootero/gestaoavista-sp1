@@ -115,7 +115,8 @@ html, body {
 }
 .goal-ap-semana { background: var(--w1-teal); }
 .goal-pp-semana { background: #0E6E84; }
-.goal-ap-mes    { background: #0E6E84; }
+.goal-ap-mes    { background: #0E6E84; cursor: pointer; }
+.goal-ap-mes:hover { background: #1085a0; }
 .goal-pp-mes    { background: #0A4D5E; }
 
 .goal-label {
@@ -325,3 +326,56 @@ html, body {
   body { font-size: 13px; }
   .ranking-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Hint no card AP ── */
+.goal-chart-hint {
+  font-size: 0.55rem; color: rgba(255,255,255,0.6);
+  margin-top: 4px; letter-spacing: 0.05em;
+}
+
+/* ── Modal gráfico ── */
+.chart-modal {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  align-items: center; justify-content: center;
+}
+.chart-modal.active { display: flex; }
+
+.chart-modal-box {
+  background: var(--w1-navy);
+  border: 1px solid var(--w1-border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  width: min(420px, 90vw);
+  text-align: center;
+}
+.chart-modal-title {
+  color: var(--w1-white);
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+#ap-chart { max-height: 260px; }
+
+.chart-legend {
+  margin-top: 18px;
+  display: flex; flex-direction: column; gap: 6px;
+  text-align: left;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.82rem;
+}
+.legend-item { display: flex; align-items: center; gap: 8px; }
+.legend-dot {
+  width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+}
+.chart-close {
+  margin-top: 20px;
+  background: transparent;
+  border: 1px solid var(--w1-border);
+  color: rgba(255,255,255,0.6);
+  padding: 6px 20px; border-radius: 6px;
+  cursor: pointer; font-size: 0.8rem;
+}
+.chart-close:hover { border-color: var(--w1-teal); color: var(--w1-teal); }

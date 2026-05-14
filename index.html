@@ -26,6 +26,16 @@
     </div>
   </header>
 
+  <!-- Modal do gráfico AP -->
+  <div id="chart-modal" class="chart-modal" onclick="fecharGrafico(event)">
+    <div class="chart-modal-box">
+      <h3 class="chart-modal-title">Realização AP do Mês</h3>
+      <canvas id="ap-chart"></canvas>
+      <div id="chart-legend" class="chart-legend"></div>
+      <button class="chart-close" onclick="fecharGrafico()">Fechar</button>
+    </div>
+  </div>
+
   <!-- Metas -->
   <div class="goals-grid">
     <div class="goal-box goal-ap-semana">
@@ -36,9 +46,10 @@
       <span class="goal-label">META PP SEMANA</span>
       <span class="goal-value" id="meta-pp-semana">–</span>
     </div>
-    <div class="goal-box goal-ap-mes">
+    <div class="goal-box goal-ap-mes" onclick="abrirGrafico()" title="Ver gráfico de realização">
       <span class="goal-label">META AP MÊS</span>
       <span class="goal-value" id="meta-ap-mes">–</span>
+      <span class="goal-chart-hint">📊 ver gráfico</span>
     </div>
     <div class="goal-box goal-pp-mes">
       <span class="goal-label">META PP MÊS</span>
@@ -92,6 +103,7 @@
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

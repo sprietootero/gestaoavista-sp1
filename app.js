@@ -13,6 +13,8 @@ const syncTime     = document.getElementById('sync-time');
 // ── Metas ──────────────────────────────────────
 let metaAPMes = 0;
 let metaPPMes = 0;
+let totalAPRealizadoAtual = 0;
+let apChart = null;
 
 function semanaDoMes() {
   const dia = new Date().getDate();
@@ -142,6 +144,7 @@ function renderizarTabela(rows) {
     <td class="tfoot-pp">${totalPP.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
   </tr>`;
 
+  totalAPRealizadoAtual = totalAPValor;
   atualizarMetasSemana(totalAPValor, totalPP);
 }
 
@@ -196,6 +199,69 @@ function recarregarDados() {
   carregarDados();
   carregarRanking();
   atualizarSyncTime();
+}
+
+// ── Gráfico AP do Mês ──────────────────────────
+function abrirGrafico() {
+  const modal = document.getElementById('chart-modal');
+  modal.classList.add('active');
+
+  const realizado = totalAPRealizadoAtual;
+  const faltante  = Math.max(0, metaAPMes - realizado);
+  const pct       = metaAPMes > 0 ? ((realizado / metaAPMes) * 100).toFixed(1) : 0;
+
+  const ctx = document.getElementById('ap-chart').getContext('2d');
+  if (apChart) apChart.destroy();
+
+  apChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Realizado', 'Faltante'],
+      datasets: [{
+        data: realizado + faltante > 0 ? [realizado, faltante] : [0, 1],
+        backgroundColor: ['#00c9a7', '#1e2a3a'],
+        borderColor:     ['#00c9a7', '#2d3f55'],
+        borderWidth: 2,
+      }],
+    },
+    options: {
+      cutout: '70%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' ' + formatarBRL(ctx.raw),
+          },
+        },
+      },
+    },
+    plugins: [{
+      id: 'centerText',
+      beforeDraw(chart) {
+        const { ctx, width, height } = chart;
+        ctx.save();
+        ctx.font = `bold ${Math.round(width / 8)}px Inter, sans-serif`;
+        ctx.fillStyle = '#00c9a7';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${pct}%`, width / 2, height / 2);
+        ctx.restore();
+      },
+    }],
+  });
+
+  document.getElementById('chart-legend').innerHTML = `
+    <div class="legend-item"><span class="legend-dot" style="background:#00c9a7"></span>
+      Realizado: <strong>${formatarBRL(realizado)}</strong></div>
+    <div class="legend-item"><span class="legend-dot" style="background:#1e2a3a"></span>
+      Faltante: <strong>${formatarBRL(faltante)}</strong></div>
+    <div class="legend-item">Meta: <strong>${formatarBRL(metaAPMes)}</strong></div>
+  `;
+}
+
+function fecharGrafico(event) {
+  if (event && event.target !== document.getElementById('chart-modal')) return;
+  document.getElementById('chart-modal').classList.remove('active');
 }
 
 // ── Init ───────────────────────────────────────
