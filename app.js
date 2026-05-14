@@ -281,6 +281,8 @@ function abrirGraficoBarras() {
   const ctx = document.getElementById('bar-chart').getContext('2d');
   if (barChart) barChart.destroy();
 
+  const pcts = realizado.map((r, i) => meta[i] > 0 ? Math.round((r / meta[i]) * 100) : 0);
+
   barChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -295,8 +297,8 @@ function abrirGraficoBarras() {
         {
           label: 'Meta',
           data: meta,
-          backgroundColor: 'rgba(255,255,255,0.15)',
-          borderColor: 'rgba(255,255,255,0.4)',
+          backgroundColor: 'rgba(255,255,255,0.10)',
+          borderColor: 'rgba(255,255,255,0.25)',
           borderWidth: 1,
           borderRadius: 4,
         },
@@ -305,23 +307,28 @@ function abrirGraficoBarras() {
     options: {
       indexAxis: 'y',
       responsive: true,
+      layout: { padding: { right: 52 } },
       plugins: {
         legend: {
-          labels: { color: '#fff', font: { size: 12 } },
+          labels: { color: 'rgba(255,255,255,0.7)', font: { size: 11 } },
         },
         tooltip: {
           callbacks: {
-            label: c => ` ${c.dataset.label}: ${formatarBRL(c.raw)}`,
+            label: c => {
+              const base = ` ${c.dataset.label}: ${formatarBRL(c.raw)}`;
+              if (c.datasetIndex === 0) return base + `  (${pcts[c.dataIndex]}% da meta)`;
+              return base;
+            },
           },
         },
       },
       scales: {
         x: {
           ticks: {
-            color: 'rgba(255,255,255,0.6)',
-            callback: v => 'R$ ' + (v / 1000).toFixed(0) + 'k',
+            color: 'rgba(255,255,255,0.5)',
+            callback: v => 'R$' + (v / 1000).toFixed(0) + 'k',
           },
-          grid: { color: 'rgba(255,255,255,0.08)' },
+          grid: { color: 'rgba(255,255,255,0.06)' },
         },
         y: {
           ticks: { color: '#fff', font: { size: 11 } },
@@ -329,6 +336,24 @@ function abrirGraficoBarras() {
         },
       },
     },
+    plugins: [{
+      id: 'pctLabels',
+      afterDatasetsDraw(chart) {
+        const ctx = chart.ctx;
+        const meta0 = chart.getDatasetMeta(0);
+        meta0.data.forEach((bar, i) => {
+          const pct = pcts[i];
+          const color = pct >= 100 ? '#4ade80' : pct >= 60 ? '#00C2B8' : pct >= 30 ? '#fbbf24' : '#f87171';
+          ctx.save();
+          ctx.font = 'bold 11px Segoe UI, sans-serif';
+          ctx.fillStyle = color;
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`${pct}%`, bar.x + 6, bar.y);
+          ctx.restore();
+        });
+      },
+    }],
   });
 }
 
