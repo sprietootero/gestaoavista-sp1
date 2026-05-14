@@ -105,7 +105,12 @@ function renderizarTabela(rows) {
   // Filtra linhas vazias e ordena por AP Valor decrescente
   const dados = rows
     .filter(r => r['Equipe'] || r['Consultor/Nível'])
-    .sort((a, b) => parseBRL(b['AP Valor'] || b['AP [R$]'] || '0') - parseBRL(a['AP Valor'] || a['AP [R$]'] || '0'));
+    .sort((a, b) => {
+      const va = parseBRL(a['AP Valor'] || a['AP [R$]'] || '0');
+      const vb = parseBRL(b['AP Valor'] || b['AP [R$]'] || '0');
+      console.log(`Sort: ${a['Equipe']} AP=${va} | ${b['Equipe']} AP=${vb}`);
+      return vb - va;
+    });
 
   let totalAA = 0, totalAF = 0, totalAP = 0;
   let totalAPValor = 0, totalREC = 0, totalPP = 0;
