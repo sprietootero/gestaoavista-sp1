@@ -363,6 +363,36 @@ html, body {
   width: min(680px, 95vw);
 }
 
+/* ── Top 10 AP do Mês ── */
+.top10-ap-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.top10-row {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  padding: 14px 20px;
+  background: var(--w1-white);
+  border: 1px solid var(--w1-gray-border);
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: box-shadow 0.2s;
+}
+.top10-row:hover { box-shadow: 0 2px 12px rgba(0,194,184,0.12); }
+.top10-row.top1  { background: #FFF8E1; border-color: #FFD700; }
+.top10-row.top2  { background: #F5F5F5; border-color: #C0C0C0; }
+.top10-row.top3  { background: #FFF3E0; border-color: #CD7F32; }
+
+.top10-medal { font-size: 1.7rem; line-height: 1; }
+.top10-pos   { font-size: 1.1rem; font-weight: 800; color: var(--w1-text-soft); }
+.top10-name  { font-weight: 700; font-size: 1rem; color: var(--w1-text-dark); }
+.top10-ap    { font-weight: 800; font-size: 1.1rem; color: var(--w1-ap-color); white-space: nowrap; }
+
 /* ── Hint no card AP ── */
 .goal-chart-hint {
   font-size: 0.55rem; color: rgba(255,255,255,0.6);

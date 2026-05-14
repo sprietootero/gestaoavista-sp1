@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "gestaoavista-sp1",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "3456"],
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "C:\\Users\\Andres\\AppData\\Local\\Programs\\Python\\Python311\\python.exe", "-m", "http.server", "3456"],
       "port": 3456
     }
   ]

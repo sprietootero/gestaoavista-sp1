@@ -275,6 +275,120 @@ def _parsear_ranking_da_pagina(page, sufixo_debug):
     return ranking
 
 
+def _parsear_top10_ap(html):
+    """Extrai top 10 consultores por AP Valor do HTML da página de rankings."""
+    soup = BeautifulSoup(html, "html.parser")
+    ranking = []
+
+    tabela = None
+    for t in soup.find_all("table"):
+        all_text = [c.get_text(strip=True).lower()
+                    for c in t.find_all(["th", "td"])]
+        if any(h in all_text for h in ["consultor", "nome", "assessor"]):
+            tabela = t
+            break
+
+    if not tabela:
+        print("  ⚠ Tabela AP não encontrada no HTML")
+        return ranking
+
+    # Cabeçalhos: última linha de <th> no thead
+    headers = []
+    thead = tabela.find("thead")
+    if thead:
+        for tr in thead.find_all("tr"):
+            ths = [th.get_text(strip=True) for th in tr.find_all("th")]
+            if ths:
+                headers = ths  # sobrescreve até a última linha com th
+    print(f"  → Colunas AP: {headers}")
+
+    # Dados estão no <tbody> (diferente do Tel Party que usa thead)
+    tbody = tabela.find("tbody")
+    if not tbody:
+        print("  ⚠ Tabela AP sem tbody")
+        return ranking
+
+    posicao = 1
+    for tr in tbody.find_all("tr"):
+        cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+        if len(cells) < 3:
+            continue
+
+        # Pular linha de Total/cabeçalho repetido
+        if cells[0].strip().lower() in ("total", "#", ""):
+            continue
+
+        row_raw = dict(zip(headers, cells)) if headers else {}
+
+        # Consultor: coluna explícita ou índice 2 (padrão: #, ID, Consultor, ...)
+        consultor = (row_raw.get("Consultor") or row_raw.get("Nome") or
+                     row_raw.get("Assessor") or
+                     (cells[2] if len(cells) > 2 else ""))
+        if not consultor or consultor in ("-", "–") or consultor.lower() in ("consultor", "nome"):
+            continue
+
+        # AP Valor: coluna "Valor" ou índice 5 (posicional)
+        ap_valor = row_raw.get("Valor", "")
+        if not ap_valor and len(cells) > 5:
+            ap_valor = cells[5]
+        if not ap_valor:
+            for c in cells:
+                if "R$" in c:
+                    ap_valor = c
+                    break
+
+        ranking.append({
+            "Posição":   posicao,
+            "Consultor": consultor,
+            "AP Valor":  ap_valor,
+        })
+        posicao += 1
+
+    top10 = ranking[:10]
+    print(f"  → {len(ranking)} entradas totais, top 10: {[r['Consultor'] for r in top10]}")
+    return top10
+
+
+def extrair_top10_ap(page):
+    """Extrai top 10 consultores por AP do mês via página de Rankings."""
+    print("\n  [ Top 10 AP do Mês ]")
+    page.goto(URL_RANKING, wait_until="networkidle")
+    time.sleep(3)
+    screenshot(page, "6_top10ap_inicial")
+
+    # Selecionar aba "APs" no topo da página
+    for seletor in ["text=APs", "a:has-text('APs')", "button:has-text('APs')", "[href*='ap']"]:
+        try:
+            page.locator(seletor).first.click()
+            print(f"  ✓ Aba APs clicada: {seletor}")
+            time.sleep(3)
+            break
+        except Exception as e:
+            print(f"  ⚠ {seletor}: {e}")
+    screenshot(page, "6b_top10ap_apos_aba")
+    # Dados já filtrados pelo escritório do usuário logado — sem filtro adicional necessário
+    screenshot(page, "6c_top10ap_filtro")
+
+    # Clicar Filtrar e aguardar resposta
+    try:
+        with page.expect_response(
+            lambda r: r.status == 200 and ("ranking" in r.url or "indicador" in r.url),
+            timeout=15_000
+        ):
+            page.get_by_role("button", name="Filtrar", exact=False).first.click()
+            print("  ✓ Filtrar clicado — aguardando...")
+        time.sleep(5)
+    except Exception as e:
+        print(f"  ⚠ expect_response: {e} — aguardando 10s")
+        time.sleep(10)
+
+    screenshot(page, "6d_top10ap_resultado")
+
+    html = page.content()
+    (DEBUG_DIR / "top10_ap.html").write_text(html, encoding="utf-8")
+    return _parsear_top10_ap(html)
+
+
 def extrair_rankings_muapd(page):
     """Extrai dois rankings: hoje e últimos 7 dias."""
     hoje      = datetime.now()
@@ -384,6 +498,7 @@ def main():
         fazer_login(page, conta["email"], conta["senha"])
         dados_brutos, metas = extrair_tabela_economia(page)
         ranking_hoje, ranking_7dias = extrair_rankings_muapd(page)
+        top10_ap = extrair_top10_ap(page)
 
         browser.close()
 
@@ -395,10 +510,12 @@ def main():
 
     campos_dados   = ["Equipe", "AA", "AF", "AP", "AP Valor", "Meta AP", "REC", "PP Total"]
     campos_ranking = ["Posição", "Consultor", "AA"]
+    campos_top10   = ["Posição", "Consultor", "AP Valor"]
 
     salvar_csv(linhas,         "dados_extraidos.csv",  campos_dados)
     salvar_csv(ranking_hoje,   "ranking_muapd.csv",    campos_ranking)
     salvar_csv(ranking_7dias,  "ranking_7dias.csv",    campos_ranking)
+    salvar_csv(top10_ap,       "top10_ap.csv",         campos_top10)
     salvar_metas(metas)
 
     print()

@@ -7,9 +7,10 @@ const CACHE_BUST = () => '?t=' + Date.now();
 // ── Elementos DOM ──────────────────────────────
 const tableBody    = document.getElementById('table-body');
 const tableFoot    = document.getElementById('table-footer');
-const rankingAside = document.getElementById('ranking-aside-body');
-const ranking7dias = document.getElementById('ranking-aside-body-7dias');
-const syncTime     = document.getElementById('sync-time');
+const rankingAside  = document.getElementById('ranking-aside-body');
+const ranking7dias  = document.getElementById('ranking-aside-body-7dias');
+const syncTime      = document.getElementById('sync-time');
+const top10APBody   = document.getElementById('top10-ap-body');
 
 // ── Estado ─────────────────────────────────────
 let metaAPMes = 0;
@@ -213,6 +214,7 @@ function recarregarDados() {
   carregarMetas();
   carregarDados();
   carregarRanking();
+  carregarTop10AP();
   atualizarSyncTime();
 }
 
@@ -362,8 +364,51 @@ function fecharGraficoBarras(event) {
   document.getElementById('bar-chart-modal').classList.remove('active');
 }
 
+// ── Top 10 AP do Mês ───────────────────────────
+function renderizarTop10AP(rows) {
+  if (!top10APBody) return;
+  if (!rows.length) {
+    top10APBody.innerHTML = '<p style="padding:20px;color:var(--w1-text-soft)">Dados não disponíveis.</p>';
+    return;
+  }
+  const MEDALHAS = ['🥇', '🥈', '🥉'];
+  top10APBody.innerHTML = rows.map((row, i) => {
+    const nome    = row['Consultor'] || '–';
+    const apValor = formatarBRL(row['AP Valor'] || '0');
+    const pos     = i < 3
+      ? `<span class="top10-medal">${MEDALHAS[i]}</span>`
+      : `<span class="top10-pos">${i + 1}</span>`;
+    const cls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    return `<div class="top10-row ${cls}">
+      ${pos}
+      <span class="top10-name">${nome}</span>
+      <span class="top10-ap">${apValor}</span>
+    </div>`;
+  }).join('');
+}
+
+function carregarTop10AP() {
+  Papa.parse('top10_ap.csv' + CACHE_BUST(), {
+    download: true, header: true, skipEmptyLines: true,
+    complete: r  => renderizarTop10AP(r.data),
+    error:    ()  => console.warn('top10_ap.csv não encontrado'),
+  });
+}
+
+// ── Alternância de views ────────────────────────
+let viewIdx = 0;
+const VIEWS_LIST   = ['view-results', 'view-top10-ap'];
+const VIEW_DURACAO = 15 * 1000; // 15 segundos por view
+
+function avancarView() {
+  document.getElementById(VIEWS_LIST[viewIdx]).classList.remove('active');
+  viewIdx = (viewIdx + 1) % VIEWS_LIST.length;
+  document.getElementById(VIEWS_LIST[viewIdx]).classList.add('active');
+}
+
 // ── Init ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   recarregarDados();
   setInterval(recarregarDados, 30 * 60 * 1000);
+  setInterval(avancarView, VIEW_DURACAO);
 });
