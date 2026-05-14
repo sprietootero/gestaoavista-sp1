@@ -366,7 +366,21 @@ def extrair_top10_ap(page):
         except Exception as e:
             print(f"  ⚠ {seletor}: {e}")
     screenshot(page, "6b_top10ap_apos_aba")
-    # Dados já filtrados pelo escritório do usuário logado — sem filtro adicional necessário
+
+    # Preencher "Escritório da produção" com W1 SP 1 (campo select2/autocomplete)
+    try:
+        campo = page.get_by_label("Escritório da produção", exact=False).first
+        campo.click()
+        time.sleep(0.5)
+        campo.fill(NOME_ESCRITORIO)
+        time.sleep(1)
+        # Clica na primeira opção do dropdown que contém o nome
+        page.get_by_text(NOME_ESCRITORIO, exact=True).first.click()
+        print(f"  ✓ Escritório da produção: {NOME_ESCRITORIO}")
+        time.sleep(0.5)
+    except Exception as e:
+        print(f"  ⚠ Escritório da produção: {e}")
+
     screenshot(page, "6c_top10ap_filtro")
 
     # Clicar Filtrar e aguardar resposta
