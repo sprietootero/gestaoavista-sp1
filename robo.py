@@ -189,14 +189,13 @@ def extrair_ranking_muapd(page):
 
     screenshot(page, "4_ranking_tel_party")
 
-    # IDs exatos do formulário Tel Party (extraídos do HTML da página)
+    # IDs exatos extraídos do HTML do formulário Tel Party
     ID_DATA_COMPROMISSO = "tel_party_ranking_form_attribute_of_interest_calendar_event_start_at"
-    ID_OFFICE_SP1       = "tel_party_ranking_form_offices_1061"
-    # Critérios: manter apenas AA, desmarcar os demais
+    # Critérios: manter apenas AA, desmarcar CA, SA, EA, AF, CF, SF, EF
     CRITERIOS_DESMARCAR = ["ca", "sa", "ea", "af", "cf", "sf", "ef"]
     ID_AA               = "tel_party_ranking_form_criterias_aa"
 
-    # Passo 1: desativar "data de compromisso"
+    # Passo 1: desativar "data de compromisso" (usar ID exato do campo)
     print("  → Desativando 'data de compromisso'...")
     try:
         cb = page.locator(f"#{ID_DATA_COMPROMISSO}")
@@ -207,25 +206,12 @@ def extrair_ranking_muapd(page):
             print("  ✓ 'data de compromisso' já desmarcado")
         time.sleep(0.5)
     except Exception as e:
-        print(f"  ⚠ Não encontrou 'data de compromisso': {e}")
+        print(f"  ⚠ 'data de compromisso': {e}")
 
     screenshot(page, "4b_data_compromisso")
 
-    # Passo 2: desmarcar todos os escritórios, selecionar apenas SP1
-    print("  → Filtrando escritório (apenas SP1)...")
-    try:
-        page.get_by_text("Selecionar todos os escritórios", exact=False).first.click()
-        time.sleep(1)
-        cb_sp1 = page.locator(f"#{ID_OFFICE_SP1}")
-        cb_sp1.click()
-        print(f"  ✓ Escritório SP1 selecionado (#{ID_OFFICE_SP1})")
-        time.sleep(0.5)
-    except Exception as e:
-        print(f"  ⚠ Filtro escritório falhou: {e}")
-
-    screenshot(page, "4c_escritorio_selecionado")
-
-    # Passo 3: desmarcar critérios, manter apenas AA
+    # Passo 2: desmarcar critérios, manter apenas AA
+    # (Não filtramos por escritório no formulário — filtramos em Python pela coluna 'escritório')
     print("  → Ajustando critérios (apenas AA)...")
     for valor in CRITERIOS_DESMARCAR:
         id_cb = f"tel_party_ranking_form_criterias_{valor}"
@@ -238,7 +224,6 @@ def extrair_ranking_muapd(page):
         except Exception as e:
             print(f"  ⚠ Critério '{valor}': {e}")
 
-    # Garante AA marcado
     try:
         cb_aa = page.locator(f"#{ID_AA}")
         if not cb_aa.is_checked():
@@ -250,34 +235,23 @@ def extrair_ranking_muapd(page):
     except Exception as e:
         print(f"  ⚠ Critério AA: {e}")
 
-    screenshot(page, "4d_criterios_ajustados")
+    screenshot(page, "4c_criterios_ajustados")
 
-    # Passo 4: aplicar filtro
+    # Passo 3: aplicar filtro e aguardar resposta AJAX
+    print("  → Aplicando filtro e aguardando AJAX...")
     try:
-        page.get_by_role("button", name="Filtrar", exact=False).first.click()
-        print("  ✓ Filtro aplicado")
-        time.sleep(3)
+        with page.expect_response(
+            lambda r: "ranking-tp" in r.url and r.status == 200,
+            timeout=120_000
+        ) as resp_info:
+            page.get_by_role("button", name="Filtrar", exact=False).first.click()
+            print("  ✓ Filtrar clicado — aguardando resposta do servidor...")
+        print(f"  ✓ Resposta recebida: {resp_info.value.url[:80]}")
+        time.sleep(3)  # deixa o DOM atualizar
     except Exception as e:
-        print(f"  ⚠ Botão Filtrar não encontrado: {e}")
+        print(f"  ⚠ expect_response falhou ({e}) — aguardando 30s como fallback")
+        time.sleep(30)
 
-    # Polling: verifica a cada 5s se a tabela carregou (até 90s)
-    print("  → Aguardando dados do ranking (até 90s)...")
-    carregou = False
-    for tentativa in range(18):
-        time.sleep(5)
-        try:
-            count = page.locator("table tbody tr td").count()
-            if count > 0:
-                print(f"  ✓ Dados carregados ({count} células) após {(tentativa+1)*5}s")
-                carregou = True
-                break
-            print(f"  ... {(tentativa+1)*5}s — aguardando...")
-        except Exception:
-            pass
-    if not carregou:
-        print("  ⚠ Tabela vazia após 90s — salvando ranking sem dados")
-
-    time.sleep(2)
     screenshot(page, "5_ranking_filtrado")
 
     html = page.content()
@@ -286,14 +260,12 @@ def extrair_ranking_muapd(page):
 
     ranking = []
 
-    # Procura tabelas com conteúdo de ranking (nome + número)
     todas_tabelas = soup.find_all("table")
     print(f"  → {len(todas_tabelas)} tabelas encontradas na página de ranking")
 
     tabela_ranking = None
     for t in todas_tabelas:
         headers = [th.get_text(strip=True).lower() for th in t.find_all("th")]
-        # Tabela de ranking deve ter coluna de nome/consultor e AA
         if any(h in headers for h in ["consultor", "nome", "assessor"]):
             tabela_ranking = t
             print(f"  ✓ Tabela de ranking identificada: colunas = {headers}")
@@ -303,32 +275,30 @@ def extrair_ranking_muapd(page):
         headers_raw = [th.get_text(strip=True) for th in tabela_ranking.find_all("th")]
         tbody = tabela_ranking.find("tbody")
         if tbody:
-            for i, tr in enumerate(tbody.find_all("tr")):
+            posicao = 1
+            for tr in tbody.find_all("tr"):
                 cells = [td.get_text(strip=True) for td in tr.find_all("td")]
                 if cells and any(c.strip() for c in cells):
                     row_raw = dict(zip(headers_raw, cells))
-                    # Normaliza para o formato esperado pelo dashboard
+                    # Filtra apenas consultores do escritório SP1
+                    escritorio = (row_raw.get("Escritório") or row_raw.get("escritório") or "")
+                    if NOME_ESCRITORIO.lower() not in escritorio.lower():
+                        continue
                     consultor = (row_raw.get("Consultor") or row_raw.get("consultor") or
                                  row_raw.get("Nome") or "")
-                    aa_val    = (row_raw.get("AA") or row_raw.get("aa") or
-                                 row_raw.get("Aa") or "0")
+                    aa_val    = (row_raw.get("AA") or row_raw.get("aa") or "0")
                     ranking.append({
-                        "Posição":   i + 1,
+                        "Posição":   posicao,
                         "Consultor": consultor,
                         "AA":        aa_val,
                     })
+                    posicao += 1
     else:
-        # Fallback: procura lista de consultores com scores
-        print("  ⚠ Tabela de ranking não identificada — tentando fallback por divs")
-        itens = soup.select("[class*='ranking-item'], [class*='rank-item'], [class*='consultant']")
-        for i, item in enumerate(itens[:50]):
-            texto = item.get_text(strip=True)
-            if texto and len(texto) > 2:
-                ranking.append({"Posição": i + 1, "Consultor": texto, "AA": ""})
+        print("  ⚠ Tabela de ranking não identificada")
 
-    print(f"  → {len(ranking)} entradas no ranking")
+    print(f"  → {len(ranking)} entradas no ranking de SP1")
     if ranking:
-        print(f"  → Primeiros do ranking: {[r.get('Consultor', r.get('Nome', '?')) for r in ranking[:5]]}")
+        print(f"  → Primeiros: {[r['Consultor'] for r in ranking[:5]]}")
 
     return ranking
 
