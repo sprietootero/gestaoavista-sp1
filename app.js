@@ -102,8 +102,10 @@ function parseNum(str) {
 }
 
 function renderizarTabela(rows) {
-  // Filtra linhas vazias
-  const dados = rows.filter(r => r['Equipe'] || r['Consultor/Nível']);
+  // Filtra linhas vazias e ordena por AP Valor decrescente
+  const dados = rows
+    .filter(r => r['Equipe'] || r['Consultor/Nível'])
+    .sort((a, b) => parseBRL(b['AP Valor'] || b['AP [R$]'] || '0') - parseBRL(a['AP Valor'] || a['AP [R$]'] || '0'));
 
   let totalAA = 0, totalAF = 0, totalAP = 0;
   let totalAPValor = 0, totalREC = 0, totalPP = 0;
