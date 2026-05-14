@@ -272,27 +272,40 @@ def extrair_ranking_muapd(page):
             break
 
     if tabela_ranking:
-        headers_raw = [th.get_text(strip=True) for th in tabela_ranking.find_all("th")]
-        tbody = tabela_ranking.find("tbody")
-        if tbody:
-            posicao = 1
-            for tr in tbody.find_all("tr"):
-                cells = [td.get_text(strip=True) for td in tr.find_all("td")]
-                if cells and any(c.strip() for c in cells):
-                    row_raw = dict(zip(headers_raw, cells))
-                    # Filtra apenas consultores do escritório SP1
-                    escritorio = (row_raw.get("Escritório") or row_raw.get("escritório") or "")
-                    if NOME_ESCRITORIO.lower() not in escritorio.lower():
-                        continue
-                    consultor = (row_raw.get("Consultor") or row_raw.get("consultor") or
-                                 row_raw.get("Nome") or "")
-                    aa_val    = (row_raw.get("AA") or row_raw.get("aa") or "0")
-                    ranking.append({
-                        "Posição":   posicao,
-                        "Consultor": consultor,
-                        "AA":        aa_val,
-                    })
-                    posicao += 1
+        # A tabela tem 2 linhas de thead com headers reais + linhas de dados como <td> dentro do <thead>
+        # Linha 1: #, Consultor, Cargo, Escritório, Próprios(colspan=4)
+        # Linha 2: AA, TOTAL, MÉDIA, BP
+        # Dados: todas as <tr> do thead que contêm <td> (não <th>)
+        thead = tabela_ranking.find("thead")
+        all_trs = thead.find_all("tr") if thead else tabela_ranking.find_all("tr")
+
+        # Monta headers corretos combinando as 2 primeiras linhas
+        HEADERS = ["#", "Consultor", "Cargo", "Escritório", "AA", "TOTAL", "MÉDIA", "BP"]
+
+        posicao = 1
+        for tr in all_trs:
+            cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+            if len(cells) < 4:
+                continue  # linha de header ou vazia
+            row_raw = dict(zip(HEADERS, cells))
+
+            # Pula linha de totais
+            if row_raw.get("#", "").lower() in ("total", ""):
+                continue
+
+            # Filtra apenas consultores do escritório SP1
+            escritorio = row_raw.get("Escritório", "")
+            if NOME_ESCRITORIO.lower() not in escritorio.lower():
+                continue
+
+            consultor = row_raw.get("Consultor", "")
+            aa_val    = row_raw.get("AA", "0")
+            ranking.append({
+                "Posição":   posicao,
+                "Consultor": consultor,
+                "AA":        aa_val,
+            })
+            posicao += 1
     else:
         print("  ⚠ Tabela de ranking não identificada")
 
