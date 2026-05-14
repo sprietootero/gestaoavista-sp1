@@ -2,8 +2,10 @@ name: Atualizar Dados w1nner
 
 on:
   schedule:
-    # Roda a cada 30 min em dias úteis, das 8h às 20h (horário de Brasília = UTC-3)
-    - cron: '*/30 11-23 * * 1-5'
+    # Das 9h às 20h59 BRT em dias úteis (12h–23h59 UTC)
+    - cron: '*/30 12-23 * * 1-5'
+    # Das 21h às 00h BRT em dias úteis (00h–03h UTC do dia seguinte)
+    - cron: '*/30 0-3 * * 2-6'
   workflow_dispatch: # permite rodar manualmente pelo GitHub
 
 jobs:
