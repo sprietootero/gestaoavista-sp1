@@ -1,6 +1,5 @@
 """
 Robô de extração de dados do w1nner para Gestão à Vista - W1 SP1
-Executa login, filtra pelo escritório SP1, extrai métricas e ranking MUAPD.
 """
 
 import os
@@ -8,6 +7,7 @@ import time
 import json
 import re
 import csv
+from pathlib import Path
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
@@ -18,10 +18,8 @@ URL_LOGIN   = "https://w1nner.w1consultoria.com.br/painel-consultor/entrar"
 URL_DADOS   = "https://w1nner.w1consultoria.com.br/painel-consultor/centro-de-economia"
 URL_RANKING = "https://w1nner.w1consultoria.com.br/painel-consultor/indicadores/rankings"
 
-# Nome do escritório exatamente como aparece no filtro do w1nner
-NOME_ESCRITORIO = os.getenv("NOME_ESCRITORIO", "W1 SP1")
+NOME_ESCRITORIO = os.getenv("NOME_ESCRITORIO", "W1 SP 1")
 
-# Líderes de equipe — ajuste se os nomes no w1nner forem diferentes
 LIDERES = [
     "Eduardo Mello",
     "Gianlucca Venturi",
@@ -31,11 +29,21 @@ LIDERES = [
     "Fernando Bianchi",
 ]
 
-CONTAS = [
-    {"email": os.getenv("CONTA1_EMAIL"), "senha": os.getenv("CONTA1_SENHA")},
-]
+CONTAS = [{"email": os.getenv("CONTA1_EMAIL"), "senha": os.getenv("CONTA1_SENHA")}]
 if os.getenv("CONTA2_EMAIL"):
     CONTAS.append({"email": os.getenv("CONTA2_EMAIL"), "senha": os.getenv("CONTA2_SENHA")})
+
+DEBUG_DIR = Path("debug")
+DEBUG_DIR.mkdir(exist_ok=True)
+
+
+def screenshot(page, nome):
+    try:
+        path = str(DEBUG_DIR / f"{nome}.png")
+        page.screenshot(path=path, timeout=10000)
+        print(f"  📸 Screenshot: {path}")
+    except Exception:
+        pass  # screenshot é só debug, não bloqueia
 
 
 def fazer_login(page, email, senha):
@@ -46,172 +54,262 @@ def fazer_login(page, email, senha):
     page.click("input[name='commit']")
     page.wait_for_load_state("networkidle")
     if "entrar" in page.url:
+        screenshot(page, "erro_login")
         raise RuntimeError(f"Login falhou para {email}")
     print("  ✓ Login OK")
 
 
-def aplicar_filtro_escritorio(page):
-    print(f"  → Aplicando filtro: {NOME_ESCRITORIO}...")
-    try:
-        page.get_by_text(NOME_ESCRITORIO, exact=False).first.click()
-        time.sleep(15)
-        print("  ✓ Filtro aplicado")
-    except Exception as e:
-        print(f"  ⚠ Não encontrou filtro '{NOME_ESCRITORIO}': {e}")
-        print("    Verifique o valor de NOME_ESCRITORIO no .env")
-
-
 def extrair_tabela_economia(page):
-    print("  → Extraindo tabela de economia...")
+    print("  → Navegando para centro de economia...")
     page.goto(URL_DADOS, wait_until="networkidle")
-    aplicar_filtro_escritorio(page)
+    time.sleep(3)
+    screenshot(page, "1_economia_inicial")
+
+    # Passo 1: clicar em "Selecionar todos os escritórios" para desmarcar tudo
+    print("  → Desmarcando todos via 'Selecionar todos os escritórios'...")
+    page.get_by_text("Selecionar todos os escritórios", exact=False).first.click()
+    time.sleep(1)
+    screenshot(page, "2a_todos_desmarcados")
+
+    # Passo 2: marcar apenas W1 SP 1
+    print(f"  → Marcando apenas: {NOME_ESCRITORIO}...")
+    page.get_by_text(NOME_ESCRITORIO, exact=True).first.click()
+    print("  ✓ Escritório selecionado")
+    time.sleep(1)
+    screenshot(page, "2b_sp1_selecionado")
+
+    # Passo 3: clicar em "Filtrar"
+    page.get_by_role("button", name="Filtrar", exact=False).first.click()
+    print("  ✓ Filtro aplicado")
+
+    print("  → Aguardando tabela carregar (20s)...")
+    time.sleep(20)
+    screenshot(page, "2_economia_filtrada")
 
     html = page.content()
+    # Salva HTML para análise
+    (DEBUG_DIR / "economia.html").write_text(html, encoding="utf-8")
+
     soup = BeautifulSoup(html, "html.parser")
+
+    # Tenta encontrar a tabela pelo ID conhecido, depois por qualquer tabela grande
     tabela = soup.find("table", {"id": "js-economy-center-table"})
     if not tabela:
-        # tenta encontrar qualquer tabela
-        tabela = soup.find("table")
+        todas = soup.find_all("table")
+        # Pega a tabela com mais linhas (mais provável ser a de dados)
+        tabela = max(todas, key=lambda t: len(t.find_all("tr")), default=None) if todas else None
+        if tabela:
+            print(f"  ⚠ Tabela principal não encontrada por ID, usando maior tabela ({len(tabela.find_all('tr'))} linhas)")
+
     if not tabela:
-        print("  ⚠ Tabela não encontrada")
+        print("  ✗ Nenhuma tabela encontrada na página")
         return [], {}
 
-    headers = [th.get_text(strip=True) for th in tabela.find_all("th")]
+    # A tabela tem 2 linhas de cabeçalho — usa apenas a última (nomes reais das colunas)
+    thead = tabela.find("thead")
+    header_rows = thead.find_all("tr") if thead else []
+    last_row = header_rows[-1] if header_rows else tabela.find("tr")
+    headers = [th.get_text(strip=True) for th in last_row.find_all("th")]
+    headers[0] = "Consultor/Nível"  # primeira célula vem da linha de grupo acima
+    print(f"  → Colunas encontradas: {headers[:12]}")
+
+    tbody = tabela.find("tbody")
+    if not tbody:
+        print("  ✗ Tabela sem tbody")
+        return [], {}
+
     rows = []
-    for tr in tabela.find("tbody").find_all("tr"):
+    for tr in tbody.find_all("tr"):
         cells = [td.get_text(strip=True) for td in tr.find_all("td")]
         if cells:
             rows.append(dict(zip(headers, cells)))
 
-    # Filtra apenas os líderes SP1
+    print(f"  → Total de linhas na tabela: {len(rows)}")
+
+    # Mostra os primeiros nomes encontrados para debug
+    nomes_encontrados = [r.get("Consultor/Nível", r.get("Consultor", "?")) for r in rows[:10]]
+    print(f"  → Primeiros nomes: {nomes_encontrados}")
+
+    # Filtra líderes
     dados_lideres = []
     for row in rows:
         consultor = row.get("Consultor/Nível", row.get("Consultor", ""))
-        if any(lider.lower() in consultor.lower() for lider in LIDERES):
-            dados_lideres.append(row)
+        # Busca por qualquer palavra do nome do líder
+        for lider in LIDERES:
+            partes = lider.lower().split()
+            if any(p in consultor.lower() for p in partes):
+                dados_lideres.append(row)
+                print(f"  ✓ Líder encontrado: {consultor}")
+                break
 
-    # Extrai metas (linha de cabeçalho ou seção dedicada)
     metas = extrair_metas_da_pagina(soup)
-
-    print(f"  ✓ {len(dados_lideres)} líderes encontrados")
+    print(f"  → {len(dados_lideres)} líderes encontrados de {len(LIDERES)} esperados")
     return dados_lideres, metas
 
 
 def extrair_metas_da_pagina(soup):
-    """Tenta extrair metas do painel. Retorna dict com o que encontrar."""
     metas = {}
-    # Procura padrões comuns de exibição de meta
     textos = soup.get_text(" ", strip=True)
-
-    # Padrões: "Meta AP Mês R$ 200.000" ou similar
     padrao_rs = re.compile(r"(Meta\s+\w+(?:\s+\w+)?)\s+R\$\s*([\d.,]+)", re.IGNORECASE)
     for m in padrao_rs.finditer(textos):
         chave = m.group(1).strip().lower().replace(" ", "_")
-        valor = m.group(2).strip()
-        metas[chave] = valor
-
-    # Padrões: "Meta PPs Mês 3.700" ou similar
+        metas[chave] = m.group(2).strip()
     padrao_pp = re.compile(r"(Meta\s+PP[s]?\s+\w+)\s+([\d.,]+)\s*PP", re.IGNORECASE)
     for m in padrao_pp.finditer(textos):
         chave = m.group(1).strip().lower().replace(" ", "_")
-        valor = m.group(2).strip()
-        metas[chave] = valor
-
+        metas[chave] = m.group(2).strip()
     return metas
 
 
 def extrair_ranking_muapd(page):
-    print("  → Extraindo ranking MUAPD...")
+    print("  → Navegando para rankings...")
     page.goto(URL_RANKING, wait_until="networkidle")
     time.sleep(3)
+    screenshot(page, "3_ranking_inicial")
 
-    # Tenta clicar no tab/link do ranking de AA (Tel Party / MUAPD)
-    for nome_tab in ["Tel Party", "MUAPD", "AA"]:
+    # Clica na aba "Tel Party" (ranking de AA/MUAPD)
+    clicou_tab = False
+    for seletor in [
+        "text=Tel Party",
+        "a:has-text('Tel Party')",
+        "button:has-text('Tel Party')",
+        "[href*='tel']",
+    ]:
         try:
-            page.get_by_role("link", name=nome_tab).first.click()
-            time.sleep(2)
+            page.locator(seletor).first.click()
+            print(f"  ✓ Clicou na aba Tel Party via: {seletor}")
+            clicou_tab = True
+            time.sleep(3)
             break
         except Exception:
             pass
 
-    # Filtra escritório
+    if not clicou_tab:
+        print("  ⚠ Não encontrou aba Tel Party — tentando sem clicar")
+
+    screenshot(page, "4_ranking_tel_party")
+
+    # Desmarcar todos, selecionar SP1, filtrar
     try:
-        page.get_by_text(NOME_ESCRITORIO, exact=False).first.click()
+        page.get_by_text("Selecionar todos os escritórios", exact=False).first.click()
+        time.sleep(1)
+        page.get_by_text(NOME_ESCRITORIO, exact=True).first.click()
+        time.sleep(1)
+        page.get_by_role("button", name="Filtrar", exact=False).first.click()
+        print(f"  ✓ Filtro ranking: apenas '{NOME_ESCRITORIO}'")
         time.sleep(3)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"  ⚠ Filtro ranking falhou: {e}")
+
+    # Polling: verifica a cada 5s se a tabela carregou (até 90s)
+    print("  → Aguardando dados do ranking (até 90s)...")
+    carregou = False
+    for tentativa in range(18):
+        time.sleep(5)
+        try:
+            count = page.locator("table tbody tr td").count()
+            if count > 0:
+                print(f"  ✓ Dados carregados ({count} células) após {(tentativa+1)*5}s")
+                carregou = True
+                break
+            print(f"  ... {(tentativa+1)*5}s — aguardando...")
+        except Exception:
+            pass
+    if not carregou:
+        print("  ⚠ Tabela vazia após 90s — salvando ranking sem dados")
+
+    time.sleep(2)
+    screenshot(page, "5_ranking_filtrado")
 
     html = page.content()
+    (DEBUG_DIR / "ranking.html").write_text(html, encoding="utf-8")
     soup = BeautifulSoup(html, "html.parser")
 
     ranking = []
-    tabela = soup.find("table")
-    if tabela:
-        headers = [th.get_text(strip=True) for th in tabela.find_all("th")]
-        for i, tr in enumerate(tabela.find("tbody").find_all("tr")):
-            cells = [td.get_text(strip=True) for td in tr.find_all("td")]
-            if cells:
-                row = dict(zip(headers, cells))
-                row["Posição"] = i + 1
-                ranking.append(row)
-    else:
-        # fallback: lista de itens
-        itens = soup.select("[class*='ranking'] li, [class*='rank'] li")
-        for i, item in enumerate(itens):
-            ranking.append({"Posição": i + 1, "Consultor": item.get_text(strip=True), "AA": ""})
 
-    print(f"  ✓ {len(ranking)} consultores no ranking")
+    # Procura tabelas com conteúdo de ranking (nome + número)
+    todas_tabelas = soup.find_all("table")
+    print(f"  → {len(todas_tabelas)} tabelas encontradas na página de ranking")
+
+    tabela_ranking = None
+    for t in todas_tabelas:
+        headers = [th.get_text(strip=True).lower() for th in t.find_all("th")]
+        # Tabela de ranking deve ter coluna de nome/consultor e AA
+        if any(h in headers for h in ["consultor", "nome", "assessor"]):
+            tabela_ranking = t
+            print(f"  ✓ Tabela de ranking identificada: colunas = {headers}")
+            break
+
+    if tabela_ranking:
+        headers_raw = [th.get_text(strip=True) for th in tabela_ranking.find_all("th")]
+        tbody = tabela_ranking.find("tbody")
+        if tbody:
+            for i, tr in enumerate(tbody.find_all("tr")):
+                cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+                if cells and any(c.strip() for c in cells):
+                    row_raw = dict(zip(headers_raw, cells))
+                    # Normaliza para o formato esperado pelo dashboard
+                    consultor = (row_raw.get("Consultor") or row_raw.get("consultor") or
+                                 row_raw.get("Nome") or "")
+                    aa_val    = (row_raw.get("AA") or row_raw.get("aa") or
+                                 row_raw.get("Aa") or "0")
+                    ranking.append({
+                        "Posição":   i + 1,
+                        "Consultor": consultor,
+                        "AA":        aa_val,
+                    })
+    else:
+        # Fallback: procura lista de consultores com scores
+        print("  ⚠ Tabela de ranking não identificada — tentando fallback por divs")
+        itens = soup.select("[class*='ranking-item'], [class*='rank-item'], [class*='consultant']")
+        for i, item in enumerate(itens[:50]):
+            texto = item.get_text(strip=True)
+            if texto and len(texto) > 2:
+                ranking.append({"Posição": i + 1, "Consultor": texto, "AA": ""})
+
+    print(f"  → {len(ranking)} entradas no ranking")
+    if ranking:
+        print(f"  → Primeiros do ranking: {[r.get('Consultor', r.get('Nome', '?')) for r in ranking[:5]]}")
+
     return ranking
 
 
 def montar_linha_lider(raw, nome_exibicao):
-    """Mapeia colunas do w1nner para o formato do dashboard."""
     def val(keys):
         for k in keys:
             v = raw.get(k, "")
-            if v:
+            if v and v != "0":
                 return v
         return "0"
 
     return {
-        "Equipe": nome_exibicao,
-        "AA":     val(["AA", "Meta AA"]),
-        "AF":     val(["AF"]),
-        "AP":     val(["AP"]),
-        "AP Valor": val(["AP [R$]", "AP Valor", "AP[R$]"]),
-        "REC":    val(["Recs", "REC", "Rec"]),
-        "PP Total": val(["Total", "PP Total", "PPs"]),
+        "Equipe":    nome_exibicao,
+        "AA":        val(["AA"]),
+        "AF":        val(["AF"]),
+        "AP":        val(["AP"]),
+        "AP Valor":  val(["AP [R$]", "AP Valor", "AP[R$]", "AP R$"]),
+        "REC":       val(["Recs", "REC", "Rec"]),
+        "PP Total":  val(["Total", "PP Total", "PPs", "PP"]),
     }
 
 
 def salvar_csv(dados, caminho, fieldnames):
     with open(caminho, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(dados)
     print(f"  ✓ Salvo: {caminho}")
 
 
 def salvar_metas(metas_brutas, caminho="metas.json"):
-    # Tenta mapear para os campos conhecidos do dashboard
-    mapeamento = {
-        "meta_ap_semana": "",
-        "meta_pp_semana": "",
-        "meta_ap_mes":    "",
-        "meta_pp_mes":    "",
-    }
+    mapeamento = {"meta_ap_semana": "", "meta_pp_semana": "", "meta_ap_mes": "", "meta_pp_mes": ""}
     for k, v in metas_brutas.items():
         kl = k.lower()
-        if "ap" in kl and "semana" in kl:
-            mapeamento["meta_ap_semana"] = v
-        elif "pp" in kl and "semana" in kl:
-            mapeamento["meta_pp_semana"] = v
-        elif "ap" in kl and "m" in kl:
-            mapeamento["meta_ap_mes"] = v
-        elif "pp" in kl and "m" in kl:
-            mapeamento["meta_pp_mes"] = v
+        if "ap" in kl and "semana" in kl:    mapeamento["meta_ap_semana"] = v
+        elif "pp" in kl and "semana" in kl:  mapeamento["meta_pp_semana"] = v
+        elif "ap" in kl:                      mapeamento["meta_ap_mes"] = v
+        elif "pp" in kl:                      mapeamento["meta_pp_mes"] = v
 
-    # Se não extraiu nada, mantém valores do arquivo existente
     if os.path.exists(caminho):
         with open(caminho, encoding="utf-8") as f:
             existente = json.load(f)
@@ -234,8 +332,9 @@ def main():
     print("=" * 50)
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
+        browser = pw.chromium.launch(headless=False)  # False = visível para debug
         page = browser.new_page()
+        page.set_viewport_size({"width": 1400, "height": 900})
 
         fazer_login(page, conta["email"], conta["senha"])
         dados_brutos, metas = extrair_tabela_economia(page)
@@ -243,24 +342,22 @@ def main():
 
         browser.close()
 
-    # Monta dados dos líderes no formato do dashboard
     linhas = []
     for raw in dados_brutos:
         consultor = raw.get("Consultor/Nível", raw.get("Consultor", ""))
-        nome_lider = next(
-            (l for l in LIDERES if l.lower() in consultor.lower()), consultor
-        )
+        nome_lider = next((l for l in LIDERES if any(p.lower() in consultor.lower() for p in l.split())), consultor)
         linhas.append(montar_linha_lider(raw, nome_lider))
 
-    campos_dados = ["Equipe", "AA", "AF", "AP", "AP Valor", "REC", "PP Total"]
+    campos_dados   = ["Equipe", "AA", "AF", "AP", "AP Valor", "REC", "PP Total"]
     campos_ranking = list(ranking[0].keys()) if ranking else ["Posição", "Consultor", "AA"]
 
-    salvar_csv(linhas, "dados_extraidos.csv", campos_dados)
-    salvar_csv(ranking, "ranking_muapd.csv", campos_ranking)
+    salvar_csv(linhas,   "dados_extraidos.csv", campos_dados)
+    salvar_csv(ranking,  "ranking_muapd.csv",   campos_ranking)
     salvar_metas(metas)
 
     print()
-    print("Extração concluída! Faça git add + commit + push para atualizar o dashboard.")
+    print(f"Screenshots de debug salvos em: {DEBUG_DIR.resolve()}")
+    print("Extração concluída!")
 
 
 if __name__ == "__main__":
