@@ -2,20 +2,11 @@
    W1 Gestão à Vista – SP1  |  Dashboard Logic
    ============================================= */
 
-const SWITCH_TIME = 30; // segundos entre views (resultados ↔ ranking)
-const CACHE_BUST  = () => '?t=' + Date.now();
-
-let timeLeft      = SWITCH_TIME;
-let showingRanking = false;
-let cicloAtivo    = false;
+const CACHE_BUST = () => '?t=' + Date.now();
 
 // ── Elementos DOM ──────────────────────────────
-const viewResults  = document.getElementById('view-results');
-const viewRanking  = document.getElementById('view-ranking');
-const progressBar  = document.getElementById('progress-bar');
 const tableBody    = document.getElementById('table-body');
 const tableFoot    = document.getElementById('table-footer');
-const rankingGrid  = document.getElementById('ranking-grid');
 const rankingAside = document.getElementById('ranking-aside-body');
 const syncTime     = document.getElementById('sync-time');
 
@@ -168,7 +159,6 @@ const MEDALHAS = ['🥇', '🥈', '🥉'];
 function renderizarRanking(rows) {
   const dados = rows.filter(r => r['Consultor'] || r['Consultor/Nível']);
 
-  // Painel lateral (aside)
   rankingAside.innerHTML = dados.map((row, i) => {
     const nome = row['Consultor'] || row['Consultor/Nível'] || '–';
     const aa   = row['AA'] || '0';
@@ -176,19 +166,6 @@ function renderizarRanking(rows) {
                        : `<span class="rank-pos">${i + 1}</span>`;
     const cls  = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
     return `<div class="ranking-row ${cls}">
-      ${pos}
-      <span class="rank-name">${nome}</span>
-      <span class="rank-aa">${aa}</span>
-    </div>`;
-  }).join('');
-
-  // View tela cheia (alternado)
-  rankingGrid.innerHTML = dados.map((row, i) => {
-    const nome = row['Consultor'] || row['Consultor/Nível'] || '–';
-    const aa   = row['AA'] || '0';
-    const pos  = i < 3 ? `<span class="rank-pos medal">${MEDALHAS[i]}</span>`
-                       : `<span class="rank-pos">${i + 1}</span>`;
-    return `<div class="ranking-card">
       ${pos}
       <span class="rank-name">${nome}</span>
       <span class="rank-aa">${aa}</span>
@@ -204,33 +181,6 @@ function carregarRanking() {
   });
 }
 
-// ── Ciclo automático resultados ↔ ranking ─────
-function alternarView() {
-  showingRanking = !showingRanking;
-  if (showingRanking) {
-    viewResults.classList.remove('active');
-    viewRanking.classList.add('active');
-  } else {
-    viewRanking.classList.remove('active');
-    viewResults.classList.add('active');
-  }
-}
-
-function iniciarCiclo() {
-  if (cicloAtivo) return;
-  cicloAtivo = true;
-
-  setInterval(() => {
-    timeLeft -= 0.1;
-    const pct = ((SWITCH_TIME - timeLeft) / SWITCH_TIME) * 100;
-    progressBar.style.width = pct + '%';
-
-    if (timeLeft <= 0) {
-      timeLeft = SWITCH_TIME;
-      alternarView();
-    }
-  }, 100);
-}
 
 // ── Timestamp de sincronização ─────────────────
 function atualizarSyncTime() {
@@ -251,6 +201,5 @@ function recarregarDados() {
 // ── Init ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   recarregarDados();
-  iniciarCiclo();
   setInterval(recarregarDados, 30 * 60 * 1000); // recarrega dados a cada 30 min
 });
