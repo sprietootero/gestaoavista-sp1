@@ -4,24 +4,24 @@ Posição,Consultor,AA
 3,Bruno Toledo Fabrini,7
 4,Paulo Coelho,6
 5,Gabriel Pereira de Santana Silva,6
-6,Miguel Abdalla,5
-7,Renato Norberto Segri,5
-8,Heitor Tebar,4
-9,Felipe da Silva Moreira,4
+6,Renato Norberto Segri,5
+7,Miguel Abdalla,5
+8,Felipe da Silva Moreira,4
+9,Heitor Tebar,4
 10,Gabriel Fraga Melo,4
 11,Erick Oliveira,4
-12,Bruno Gonçalves Nunes da Costa,3
-13,Matheus Giovanini Ferreyra Avelar,3
-14,Antonio Correa,3
-15,Eduardo Gianesi Dias de Aguiar Fadul,3
-16,Victor Chibana,3
-17,Santiago Prieto Otero,3
-18,Henrique Martins Pinto,3
-19,Gabriel Calil do Nascimento,3
-20,João Victor Carvalhaes de Freitas,3
-21,Estêvão Stutz Gonçalves,3
-22,Lucas Marques Landes Silva,3
-23,Henrique Cubero Regi,3
+12,Henrique Martins Pinto,3
+13,Estêvão Stutz Gonçalves,3
+14,Henrique Cubero Regi,3
+15,Matheus Giovanini Ferreyra Avelar,3
+16,Lucas Marques Landes Silva,3
+17,João Victor Carvalhaes de Freitas,3
+18,Gabriel Calil do Nascimento,3
+19,Santiago Prieto Otero,3
+20,Eduardo Gianesi Dias de Aguiar Fadul,3
+21,Bruno Gonçalves Nunes da Costa,3
+22,Victor Chibana,3
+23,Antonio Correa,3
 24,Luana Alves Damasceno,2
 25,Vitor Venturoli Cardoso,2
 26,Gabriel Ferreira Fernandes,2
@@ -38,37 +38,38 @@ Posição,Consultor,AA
 37,Eduarda Martines Carreon,2
 38,Katarina Trindade Fazekas,2
 39,Alexandre Augusto Barbosa Mariano,2
-40,Vitor Janela izidoro,1
-41,João Victor Barbosa Paixão,1
-42,Ana Carolina Pereira Fernandes,1
-43,Daniela Fonseca dos Santos,1
-44,Daniel Hupfeld Moreno,1
-45,Ana Laura Silva Betiol,1
-46,Julio Norkaitis Gomes,1
-47,Larissa Araujo da Silva,1
-48,Giovanny Gutierrez,1
-49,Samuel Pini Baptista,1
-50,Mariana Blanes Santamaría,1
-51,⁠Renan Gennari Moreira,1
-52,Levi Dantas,0
-53,Filipe Guarnieri,0
-54,André Machado Tavares,0
-55,Vinícius da Luz Teixeira,0
-56,André Rossa Drewes,0
-57,Zander Yuzo Okimasu,0
-58,Eduardo Florio Fukugava,0
-59,Bruno Liblik Quintaes,0
-60,Thauan Peron Nazário,0
-61,Vitor Coelho Silva,0
-62,Vitor Soares Pionorio,0
-63,Fabio Mattioli Ferigolli Romanoff,0
-64,Gianlucca Venturi,0
-65,Fernando Bianchi Vieira,0
-66,Eduardo Pinheiro De Mello,0
-67,Ivie Collado Bastos,0
-68,Enzo Bastos Panza,0
+40,Daniela Fonseca dos Santos,1
+41,Daniel Hupfeld Moreno,1
+42,Giovanny Gutierrez,1
+43,Vitor Janela izidoro,1
+44,Samuel Pini Baptista,1
+45,Mariana Blanes Santamaría,1
+46,Ana Carolina Pereira Fernandes,1
+47,⁠Renan Gennari Moreira,1
+48,Ana Laura Silva Betiol,1
+49,Julio Norkaitis Gomes,1
+50,João Victor Barbosa Paixão,1
+51,Larissa Araujo da Silva,1
+52,Enzo Bastos Panza,0
+53,Fabio Mattioli Ferigolli Romanoff,0
+54,Fernando Bianchi Vieira,0
+55,Rodolfo Araújo Contini,0
+56,Vinícius da Luz Teixeira,0
+57,Eduardo Florio Fukugava,0
+58,Ivie Collado Bastos,0
+59,Levi Dantas,0
+60,Filipe Guarnieri,0
+61,André Rossa Drewes,0
+62,Bruno Liblik Quintaes,0
+63,Murilo Tonelli Costa,0
+64,Thauan Peron Nazário,0
+65,Vitor Soares Pionorio,0
+66,Vitor Coelho Silva,0
+67,Gianlucca Venturi,0
+68,Eduardo Pinheiro De Mello,0
 69,Matheus Prá da Silva Goulart,0
 70,Murilo Colin Pereira,0
 71,Aidan Victor Osawa Ravin,0
-72,Rodolfo Araújo Contini,0
-73,Pedro Henrique Pereira dos Santos Melo,0
+72,Pedro Henrique Pereira dos Santos Melo,0
+73,André Machado Tavares,0
+74,Zander Yuzo Okimasu,0
