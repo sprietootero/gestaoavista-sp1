@@ -175,6 +175,7 @@
 
     <button class="btn" id="btn-salvar" onclick="salvarMetas()">💾 Salvar e publicar</button>
     <div id="msg-metas" class="msg"></div>
+    <p class="logout" onclick="trocarToken()">Trocar token</p>
     <p class="logout" onclick="sair()">Sair</p>
   </div>
 </div>
@@ -312,6 +313,13 @@
 
     btn.disabled = false;
     btn.textContent = '💾 Salvar e publicar';
+  }
+
+  function trocarToken() {
+    localStorage.removeItem('w1sp1_token');
+    mostrar('screen-token');
+    document.getElementById('input-token').value = '';
+    document.getElementById('msg-token').style.display = 'none';
   }
 
   function sair() {
