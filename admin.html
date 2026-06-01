@@ -192,6 +192,12 @@
     document.getElementById(id).classList.add('active');
   }
 
+  // Reset via URL ?reset=1
+  if (new URLSearchParams(location.search).get('reset') === '1') {
+    localStorage.removeItem('w1sp1_token');
+    history.replaceState({}, '', location.pathname);
+  }
+
   // ── Tela 1: Verificar senha ────────────────────
   document.getElementById('input-senha').addEventListener('keydown', e => {
     if (e.key === 'Enter') verificarSenha();
