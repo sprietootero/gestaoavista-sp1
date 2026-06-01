@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – W1 SP1</title>
+  <style>
+    :root {
+      --dark:  #05171E;
+      --teal:  #00C2B8;
+      --teal2: #00D2C8;
+      --bg:    #F9FAFB;
+      --white: #FFFFFF;
+      --border:#E5E7EB;
+      --text:  #111827;
+      --soft:  #6B7280;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px 40px;
+      width: 100%; max-width: 460px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+
+    .logo-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 28px;
+    }
+    .logo-box {
+      width: 44px; height: 44px;
+      background: var(--teal); color: var(--dark);
+      font-weight: 900; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+    }
+    .logo-titles h1 { font-size: 1.1rem; font-weight: 800; }
+    .logo-titles p  { font-size: 0.7rem; color: var(--soft); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    h2 { font-size: 1rem; font-weight: 700; margin-bottom: 20px; color: var(--dark); }
+
+    label {
+      display: block;
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--soft); letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 6px; margin-top: 18px;
+    }
+    input[type="text"], input[type="password"], input[type="number"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--teal); }
+
+    .btn {
+      margin-top: 24px;
+      width: 100%;
+      background: var(--teal);
+      color: var(--dark);
+      font-weight: 800; font-size: 0.95rem;
+      border: none; border-radius: 8px;
+      padding: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover  { background: var(--teal2); }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: var(--border); color: var(--soft); cursor: not-allowed; }
+
+    .msg {
+      margin-top: 16px;
+      padding: 11px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: none;
+    }
+    .msg.ok    { background: #D1FAE5; color: #065F46; }
+    .msg.erro  { background: #FEE2E2; color: #991B1B; }
+
+    .token-hint {
+      margin-top: 12px;
+      font-size: 0.75rem;
+      color: var(--soft);
+      line-height: 1.5;
+    }
+    .token-hint a { color: var(--teal); }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .current-vals {
+      background: #EBF9F9;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
+      color: var(--soft);
+    }
+    .current-vals span { font-weight: 700; color: var(--dark); }
+
+    .logout {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--soft);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .logout:hover { color: var(--teal); }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-row">
+    <div class="logo-box">W1</div>
+    <div class="logo-titles">
+      <h1>Gestão à Vista – SP1</h1>
+      <p>Painel Administrativo</p>
+    </div>
+  </div>
+
+  <!-- Tela 1: Senha -->
+  <div id="screen-senha" class="screen active">
+    <h2>🔒 Acesso restrito</h2>
+    <label>Senha</label>
+    <input type="password" id="input-senha" placeholder="Digite a senha" />
+    <button class="btn" onclick="verificarSenha()">Entrar</button>
+    <div id="msg-senha" class="msg erro">Senha incorreta.</div>
+  </div>
+
+  <!-- Tela 2: Token (primeira vez) -->
+  <div id="screen-token" class="screen">
+    <h2>⚙️ Configuração inicial</h2>
+    <p style="font-size:0.85rem;color:var(--soft);margin-bottom:4px;">
+      Insira o GitHub Token para habilitar as atualizações. Feito uma vez só.
+    </p>
+    <label>GitHub Personal Access Token</label>
+    <input type="password" id="input-token" placeholder="ghp_..." />
+    <p class="token-hint">
+      Gere em: <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens</a>
+      → selecione escopo <strong>repo</strong> → gerar → copiar aqui.
+    </p>
+    <button class="btn" onclick="salvarToken()">Salvar token</button>
+    <div id="msg-token" class="msg erro"></div>
+  </div>
+
+  <!-- Tela 3: Formulário de metas -->
+  <div id="screen-metas" class="screen">
+    <h2>📊 Atualizar Metas do Mês</h2>
+    <div class="current-vals" id="current-vals">Carregando valores atuais...</div>
+
+    <label>Meta AP Mês (R$)</label>
+    <input type="number" id="input-ap-mes" placeholder="ex: 466000" step="1000" />
+
+    <label>Meta PP Mês</label>
+    <input type="number" id="input-pp-mes" placeholder="ex: 7100" step="100" />
+
+    <button class="btn" id="btn-salvar" onclick="salvarMetas()">💾 Salvar e publicar</button>
+    <div id="msg-metas" class="msg"></div>
+    <p class="logout" onclick="sair()">Sair</p>
+  </div>
+</div>
+
+<script>
+  const SENHA    = 'OfficeSP1!';
+  const OWNER    = 'sprietootero';
+  const REPO     = 'gestaoavista-sp1';
+  const ARQUIVO  = 'metas.json';
+
+  // ── Navegação de telas ─────────────────────────
+  function mostrar(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // ── Tela 1: Verificar senha ────────────────────
+  document.getElementById('input-senha').addEventListener('keydown', e => {
+    if (e.key === 'Enter') verificarSenha();
+  });
+
+  function verificarSenha() {
+    const v = document.getElementById('input-senha').value;
+    if (v === SENHA) {
+      document.getElementById('msg-senha').style.display = 'none';
+      const token = localStorage.getItem('w1sp1_token');
+      if (token) {
+        mostrar('screen-metas');
+        carregarMetas();
+      } else {
+        mostrar('screen-token');
+      }
+    } else {
+      const m = document.getElementById('msg-senha');
+      m.textContent = 'Senha incorreta.';
+      m.className = 'msg erro';
+      m.style.display = 'block';
+    }
+  }
+
+  // ── Tela 2: Salvar token ───────────────────────
+  function salvarToken() {
+    const t = document.getElementById('input-token').value.trim();
+    if (!t.startsWith('ghp_') && !t.startsWith('github_pat_')) {
+      const m = document.getElementById('msg-token');
+      m.textContent = 'Token inválido. Deve começar com ghp_ ou github_pat_';
+      m.style.display = 'block';
+      return;
+    }
+    localStorage.setItem('w1sp1_token', t);
+    mostrar('screen-metas');
+    carregarMetas();
+  }
+
+  // ── Tela 3: Carregar e salvar metas ───────────
+  let shaAtual = '';
+
+  async function carregarMetas() {
+    const token = localStorage.getItem('w1sp1_token');
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${OWNER}/${REPO}/contents/${ARQUIVO}`,
+        { headers: { Authorization: `token ${token}` } }
+      );
+      const data = await res.json();
+      shaAtual = data.sha;
+      const conteudo = JSON.parse(atob(data.content));
+      document.getElementById('input-ap-mes').value = conteudo.meta_ap_mes || '';
+      document.getElementById('input-pp-mes').value = conteudo.meta_pp_mes || '';
+      document.getElementById('current-vals').innerHTML =
+        `Valores atuais — AP: <span>R$ ${Number(conteudo.meta_ap_mes||0).toLocaleString('pt-BR')}</span>
+         &nbsp;|&nbsp; PP: <span>${Number(conteudo.meta_pp_mes||0).toLocaleString('pt-BR')} PPs</span>`;
+    } catch (e) {
+      document.getElementById('current-vals').textContent = 'Erro ao carregar valores atuais.';
+    }
+  }
+
+  async function salvarMetas() {
+    const token  = localStorage.getItem('w1sp1_token');
+    const apMes  = document.getElementById('input-ap-mes').value.trim();
+    const ppMes  = document.getElementById('input-pp-mes').value.trim();
+    const btn    = document.getElementById('btn-salvar');
+    const msg    = document.getElementById('msg-metas');
+
+    if (!apMes || !ppMes) {
+      msg.textContent = 'Preencha os dois campos.';
+      msg.className = 'msg erro';
+      msg.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+
+    const novoConteudo = JSON.stringify({
+      meta_ap_semana: '',
+      meta_pp_semana: '',
+      meta_ap_mes: apMes,
+      meta_pp_mes: ppMes
+    }, null, 2);
+
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${OWNER}/${REPO}/contents/${ARQUIVO}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `metas: atualização ${new Date().toLocaleDateString('pt-BR')}`,
+            content: btoa(novoConteudo),
+            sha: shaAtual
+          })
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        shaAtual = data.content.sha;
+        msg.textContent = '✅ Metas atualizadas! Dashboard atualiza em ~1 minuto.';
+        msg.className = 'msg ok';
+        msg.style.display = 'block';
+        carregarMetas();
+      } else {
+        const err = await res.json();
+        throw new Error(err.message || res.status);
+      }
+    } catch (e) {
+      msg.textContent = `Erro: ${e.message}. Verifique o token.`;
+      msg.className = 'msg erro';
+      msg.style.display = 'block';
+    }
+
+    btn.disabled = false;
+    btn.textContent = '💾 Salvar e publicar';
+  }
+
+  function sair() {
+    mostrar('screen-senha');
+    document.getElementById('input-senha').value = '';
+  }
+</script>
+
+</body>
+</html>
