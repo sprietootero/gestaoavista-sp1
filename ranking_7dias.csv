@@ -1,76 +1,70 @@
 Posição,Consultor,AA
-1,Gabriel Maroti dos Santos,11
-2,Sally Eunhee,9
-3,Gabriel Pereira de Santana Silva,7
-4,Erick Oliveira,7
-5,Gabriel Macchion,7
-6,Paulo Coelho,6
+1,Gabriel Maroti dos Santos,12
+2,Gabriel Macchion,8
+3,Sally Eunhee,8
+4,Gabriel Pereira de Santana Silva,7
+5,Anderson dos Santos da Silva,7
+6,Paulo Coelho,7
 7,Bruno Gonçalves Nunes da Costa,6
 8,João Victor Carvalhaes de Freitas,6
-9,Estêvão Stutz Gonçalves,5
-10,Luiz Felipe Domingues Valente,5
-11,Anderson dos Santos da Silva,5
-12,Matheus Giovanini Ferreyra Avelar,5
-13,Raphael Ramos,5
-14,Tatiana Aparecida Conceição Pires,4
-15,Renato Norberto Segri,4
-16,Davi Cortez Gianezzi,4
-17,Eduarda dos Santos Moreira,4
-18,Lucas de Medeiros Assumpção,4
-19,Daniela Fonseca dos Santos,3
-20,Bruno Toledo Fabrini,3
+9,Luiz Felipe Domingues Valente,5
+10,Estêvão Stutz Gonçalves,5
+11,Davi Cortez Gianezzi,4
+12,Erick Oliveira,4
+13,Daniela Fonseca dos Santos,4
+14,Matheus Giovanini Ferreyra Avelar,4
+15,Tatiana Aparecida Conceição Pires,4
+16,Renato Norberto Segri,4
+17,Lucas de Medeiros Assumpção,4
+18,Eduarda dos Santos Moreira,4
+19,Bruno Toledo Fabrini,3
+20,Aidan Victor Osawa Ravin,3
 21,João Victor Barbosa Paixão,3
-22,Santiago Prieto Otero,3
-23,Felipe da Silva Moreira,2
-24,Rafael André Dias,2
-25,Eduardo Gianesi Dias de Aguiar Fadul,2
-26,Gabriel Prates Gragnani,2
-27,Thiago de Arruda Lopes,2
-28,Aidan Victor Osawa Ravin,2
+22,Raphael Ramos,3
+23,Santiago Prieto Otero,3
+24,Marina Ferreira Nishiya,2
+25,Gabriel Prates Gragnani,2
+26,Roberta dos Anjos Matos Resende,2
+27,Miguel Abdalla,2
+28,Gabriel Ferreira Fernandes,2
 29,Gabriel Calil do Nascimento,2
-30,Daniel Almeida dos Prazeres,2
-31,Guilherme Gonçalves Santana,2
-32,Victor Chibana,2
-33,Roberta dos Anjos Matos Resende,2
-34,Miguel Abdalla,1
-35,Gianlucca Venturi,1
-36,Filipe Guarnieri,1
-37,Fernando Bianchi Vieira,1
-38,Larissa Araujo da Silva,1
-39,Vitor Venturoli Cardoso,1
-40,Pedro Henrique Pereira dos Santos Melo,1
-41,Gabriel Ferreira Fernandes,1
-42,Marina Ferreira Nishiya,1
-43,Vitor Coelho Silva,1
-44,Bruno Liblik Quintaes,1
-45,Eduardo Florio Fukugava,1
-46,Henrique Cubero Regi,1
-47,Lucas Marques Landes Silva,1
-48,Samuel Pini Baptista,1
-49,Vitor Janela izidoro,1
-50,Alexandre Augusto Barbosa Mariano,1
-51,Vinicius Jhunji Kido,1
-52,João Victor Lemos de Oliveira,1
-53,Murilo Piloto Moreira Santos,1
-54,Lauro  Cabral,1
-55,Reynaldo Koch Utaka,0
-56,Gabriel Fraga Melo,0
-57,Ivie Collado Bastos,0
-58,Matheus Santiago,0
-59,João Paulo Rodrigues Santana,0
-60,Enzo Bastos Panza,0
-61,Henrique Martins Pinto,0
-62,Bruna Thayna Avelar Sobrinho Bezerra,0
-63,Raissa Fiche,0
-64,André Falcato Martins,0
-65,Ana Carolina Pereira Fernandes,0
-66,Daniel Hupfeld Moreno,0
-67,André Machado Tavares,0
-68,Vinícius da Luz Teixeira,0
-69,Ana Laura Silva Betiol,0
-70,Antonio Correa,0
-71,Giovanny Gutierrez,0
-72,Eduarda Martines Carreon,0
-73,Eduardo Pinheiro De Mello,0
-74,Rodolfo Araújo Contini,0
-75,Heitor Tebar,0
+30,Eduardo Gianesi Dias de Aguiar Fadul,2
+31,Thiago de Arruda Lopes,2
+32,Daniel Almeida dos Prazeres,2
+33,Guilherme Gonçalves Santana,2
+34,Felipe da Silva Moreira,2
+35,Victor Chibana,2
+36,Lauro  Cabral,1
+37,Gianlucca Venturi,1
+38,Filipe Guarnieri,1
+39,Fernando Bianchi Vieira,1
+40,Larissa Araujo da Silva,1
+41,Vitor Venturoli Cardoso,1
+42,Pedro Henrique Pereira dos Santos Melo,1
+43,Henrique Martins Pinto,1
+44,Vitor Coelho Silva,1
+45,Bruno Liblik Quintaes,1
+46,Eduardo Florio Fukugava,1
+47,Rafael André Dias,1
+48,Henrique Cubero Regi,1
+49,Lucas Marques Landes Silva,1
+50,Samuel Pini Baptista,1
+51,Alexandre Augusto Barbosa Mariano,1
+52,Vinicius Jhunji Kido,1
+53,João Victor Lemos de Oliveira,1
+54,Murilo Piloto Moreira Santos,1
+55,Rodolfo Araújo Contini,1
+56,Reynaldo Koch Utaka,0
+57,Gabriel Fraga Melo,0
+58,Ivie Collado Bastos,0
+59,Enzo Bastos Panza,0
+60,Ana Carolina Pereira Fernandes,0
+61,Vinícius da Luz Teixeira,0
+62,Eduardo Pinheiro De Mello,0
+63,André Falcato Martins,0
+64,Daniel Hupfeld Moreno,0
+65,Ana Laura Silva Betiol,0
+66,Antonio Correa,0
+67,Giovanny Gutierrez,0
+68,André Machado Tavares,0
+69,Heitor Tebar,0
