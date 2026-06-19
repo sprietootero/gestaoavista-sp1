@@ -2,44 +2,44 @@ Posição,Consultor,AA
 1,Guilherme Gonçalves Capaldi,10
 2,Aidan Victor Osawa Ravin,9
 3,Gabriel Maroti dos Santos,9
-4,Paulo Coelho,8
-5,Sally Eunhee,8
+4,Sally Eunhee,8
+5,Paulo Coelho,8
 6,Gabriel Pereira de Santana Silva,7
-7,Anderson dos Santos da Silva,6
-8,Gabriel Macchion,5
-9,Lucas de Medeiros Assumpção,4
-10,Felipe da Silva Moreira,4
+7,Gabriel Macchion,6
+8,Anderson dos Santos da Silva,6
+9,Lauro  Cabral,4
+10,Lucas de Medeiros Assumpção,4
 11,Raphael Ramos,4
-12,João Victor Carvalhaes de Freitas,4
+12,Davi Cortez Gianezzi,4
 13,Vinícius da Luz Teixeira,4
-14,Lauro  Cabral,4
-15,Bruno Toledo Fabrini,3
+14,João Victor Carvalhaes de Freitas,4
+15,Felipe da Silva Moreira,4
 16,Estêvão Stutz Gonçalves,3
-17,Matheus Giovanini Ferreyra Avelar,3
-18,Tatiana Aparecida Conceição Pires,3
-19,Davi Cortez Gianezzi,3
-20,Roberta dos Anjos Matos Resende,3
+17,Santiago Prieto Otero,3
+18,Roberta dos Anjos Matos Resende,3
+19,Matheus Giovanini Ferreyra Avelar,3
+20,Tatiana Aparecida Conceição Pires,3
 21,Victor Chibana,3
-22,Miguel Abdalla,2
-23,Henrique Martins Pinto,2
+22,Miguel Abdalla,3
+23,Bruno Toledo Fabrini,3
 24,Eduarda dos Santos Moreira,2
-25,Thiago de Arruda Lopes,2
-26,Santiago Prieto Otero,2
-27,Gabriel Prates Gragnani,2
+25,Henrique Martins Pinto,2
+26,Daniela Fonseca dos Santos,2
+27,Thiago de Arruda Lopes,2
 28,Gabriel Calil do Nascimento,2
-29,Luís Gustavo Rodrigues Martins,2
+29,Guilherme Gonçalves Santana,2
 30,João Victor Barbosa Paixão,2
-31,Vitor Venturoli Cardoso,1
-32,Gianlucca Venturi,1
-33,Filipe Guarnieri,1
-34,Renato Norberto Segri,1
-35,Rodolfo Araújo Contini,1
-36,Bruno Gonçalves Nunes da Costa,1
-37,Daniela Fonseca dos Santos,1
-38,Gabriel Ferreira Fernandes,1
-39,Ana Carolina Pereira Fernandes,1
-40,Marina Ferreira Nishiya,1
-41,Guilherme Gonçalves Santana,1
+31,Luís Gustavo Rodrigues Martins,2
+32,Gabriel Prates Gragnani,2
+33,Vitor Venturoli Cardoso,1
+34,Gianlucca Venturi,1
+35,Filipe Guarnieri,1
+36,Renato Norberto Segri,1
+37,Rodolfo Araújo Contini,1
+38,Bruno Gonçalves Nunes da Costa,1
+39,Gabriel Ferreira Fernandes,1
+40,Ana Carolina Pereira Fernandes,1
+41,Marina Ferreira Nishiya,1
 42,Rafael André Dias,1
 43,Luiz Felipe Domingues Valente,1
 44,Daniel Almeida dos Prazeres,1
@@ -47,34 +47,35 @@ Posição,Consultor,AA
 46,Henrique Cubero Regi,1
 47,Samuel Pini Baptista,1
 48,Mariana Blanes Santamaría,1
-49,Lucas Marques Landes Silva,0
-50,Eduardo Gianesi Dias de Aguiar Fadul,0
-51,Ivie Collado Bastos,0
-52,Giovanny Gutierrez,0
-53,João Pedro Micelli Pedroso,0
-54,Henrique Nascimento Ramos,0
-55,Eduardo Florio Fukugava,0
-56,Enzo Bastos Panza,0
-57,Reynaldo Koch Utaka,0
-58,Gabriel Fraga Melo,0
-59,Bruno Liblik Quintaes,0
-60,Alexandre Augusto Barbosa Mariano,0
-61,Vitor Coelho Silva,0
-62,Raphael Mendes Moreira,0
-63,Vinicius Jhunji Kido,0
-64,João Victor Lemos de Oliveira,0
-65,Pedro Henrique Pereira dos Santos Melo,0
-66,Daniel Hupfeld Moreno,0
-67,André Machado Tavares,0
-68,Larissa Araujo da Silva,0
-69,Vinicius Casante Di Giacomo,0
-70,Fabio Mattioli Ferigolli Romanoff,0
-71,Fernando Bianchi Vieira,0
-72,Eduardo Pinheiro De Mello,0
-73,Júlio Nascimento Feitosa,0
-74,João Vitor Simão Renda Lanfredi,0
-75,Arthur Daniel Sani Nunez,0
-76,Jonathas da Silva Dias,0
-77,Guilherme Yuri Trigineli,0
-78,Heitor Tebar,0
-79,Ana Laura Silva Betiol,0
+49,Alexandre Augusto Barbosa Mariano,1
+50,Lucas Marques Landes Silva,0
+51,Eduardo Gianesi Dias de Aguiar Fadul,0
+52,Ivie Collado Bastos,0
+53,Giovanny Gutierrez,0
+54,João Pedro Micelli Pedroso,0
+55,Henrique Nascimento Ramos,0
+56,Eduardo Florio Fukugava,0
+57,Enzo Bastos Panza,0
+58,Reynaldo Koch Utaka,0
+59,Gabriel Fraga Melo,0
+60,Bruno Liblik Quintaes,0
+61,Raphael Mendes Moreira,0
+62,Vitor Coelho Silva,0
+63,Vinicius Casante Di Giacomo,0
+64,Vinicius Jhunji Kido,0
+65,João Victor Lemos de Oliveira,0
+66,Pedro Henrique Pereira dos Santos Melo,0
+67,Daniel Hupfeld Moreno,0
+68,André Machado Tavares,0
+69,Larissa Araujo da Silva,0
+70,Victor Hugo de Mendonça Tolini,0
+71,Fabio Mattioli Ferigolli Romanoff,0
+72,Fernando Bianchi Vieira,0
+73,Eduardo Pinheiro De Mello,0
+74,Júlio Nascimento Feitosa,0
+75,João Vitor Simão Renda Lanfredi,0
+76,Arthur Daniel Sani Nunez,0
+77,Jonathas da Silva Dias,0
+78,Guilherme Yuri Trigineli,0
+79,Heitor Tebar,0
+80,Ana Laura Silva Betiol,0
