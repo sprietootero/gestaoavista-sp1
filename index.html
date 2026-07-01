@@ -109,19 +109,23 @@
     <!-- Painel lateral de ranking -->
     <aside class="ranking-aside">
       <div class="ranking-aside-header">
-        <h3>RANKING MUAPD</h3>
-        <div class="ranking-tabs">
+        <h3 id="ranking-aside-title">RANKING MUAPD</h3>
+        <div id="ranking-tabs-muapd" class="ranking-tabs">
           <button class="ranking-tab active" onclick="trocarAbaRanking('hoje', this)">Hoje</button>
           <button class="ranking-tab" onclick="trocarAbaRanking('7dias', this)">7 Dias</button>
+        </div>
+        <div id="ranking-tabs-muepd" class="ranking-tabs" style="display:none">
+          <span class="ranking-tab active" style="cursor:default">Hoje</span>
         </div>
       </div>
       <div class="ranking-aside-cols">
         <span class="ranking-aside-label">#</span>
         <span class="ranking-aside-label">Consultor</span>
-        <span class="ranking-aside-label col-aa">AA</span>
+        <span class="ranking-aside-label col-aa" id="ranking-aside-col-label">AA</span>
       </div>
       <div id="ranking-aside-body"></div>
       <div id="ranking-aside-body-7dias" style="display:none"></div>
+      <div id="ranking-aside-body-muepd" style="display:none"></div>
     </aside>
 
   </main>

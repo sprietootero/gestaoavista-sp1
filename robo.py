@@ -162,13 +162,14 @@ def extrair_metas_da_pagina(soup):
     return metas
 
 
-def _aplicar_filtros_tel_party(page, data_inicio_str, data_fim_str, sufixo_screenshot):
+def _aplicar_filtros_tel_party(page, data_inicio_str, data_fim_str, sufixo_screenshot, criterio="aa"):
     """Aplica filtros de critério e data no formulário Tel Party e aguarda AJAX."""
     ID_DATA_COMPROMISSO = "tel_party_ranking_form_attribute_of_interest_calendar_event_start_at"
     ID_DATA_INICIO      = "tel_party_ranking_form_created_at_start_period_date"
     ID_DATA_FIM         = "tel_party_ranking_form_created_at_end_period_date"
-    CRITERIOS_DESMARCAR = ["ca", "sa", "ea", "af", "cf", "sf", "ef"]
-    ID_AA               = "tel_party_ranking_form_criterias_aa"
+    TODOS_CRITERIOS     = ["ca", "sa", "ea", "aa", "af", "cf", "sf", "ef"]
+    CRITERIOS_DESMARCAR = [c for c in TODOS_CRITERIOS if c != criterio]
+    ID_MANTER           = f"tel_party_ranking_form_criterias_{criterio}"
 
     # Desativar "data de compromisso"
     try:
@@ -194,7 +195,7 @@ def _aplicar_filtros_tel_party(page, data_inicio_str, data_fim_str, sufixo_scree
     preencher_data(ID_DATA_FIM,    data_fim_str)
     print(f"  ✓ Datas: {data_inicio_str} → {data_fim_str}")
 
-    # Desmarcar critérios, manter apenas AA
+    # Desmarcar critérios, manter apenas o escolhido
     for valor in CRITERIOS_DESMARCAR:
         try:
             cb = page.locator(f"#tel_party_ranking_form_criterias_{valor}")
@@ -204,12 +205,12 @@ def _aplicar_filtros_tel_party(page, data_inicio_str, data_fim_str, sufixo_scree
         except Exception:
             pass
     try:
-        cb_aa = page.locator(f"#{ID_AA}")
-        if not cb_aa.is_checked():
-            cb_aa.click()
+        cb_manter = page.locator(f"#{ID_MANTER}")
+        if not cb_manter.is_checked():
+            cb_manter.click()
         time.sleep(0.2)
     except Exception as e:
-        print(f"  ⚠ Critério AA: {e}")
+        print(f"  ⚠ Critério {criterio.upper()}: {e}")
 
     screenshot(page, f"4_{sufixo_screenshot}_filtros")
 
@@ -229,13 +230,13 @@ def _aplicar_filtros_tel_party(page, data_inicio_str, data_fim_str, sufixo_scree
     screenshot(page, f"5_{sufixo_screenshot}_resultado")
 
 
-def _parsear_ranking_da_pagina(page, sufixo_debug):
+def _parsear_ranking_da_pagina(page, sufixo_debug, campo="AA"):
     """Extrai e retorna o ranking de SP1 do HTML atual da página."""
     html = page.content()
     (DEBUG_DIR / f"ranking_{sufixo_debug}.html").write_text(html, encoding="utf-8")
     soup = BeautifulSoup(html, "html.parser")
 
-    HEADERS = ["#", "Consultor", "Cargo", "Escritório", "AA", "TOTAL", "MÉDIA", "BP"]
+    HEADERS = ["#", "Consultor", "Cargo", "Escritório", campo, "TOTAL", "MÉDIA", "BP"]
     ranking = []
 
     tabela_ranking = None
@@ -265,7 +266,7 @@ def _parsear_ranking_da_pagina(page, sufixo_debug):
         ranking.append({
             "Posição":   posicao,
             "Consultor": row_raw.get("Consultor", ""),
-            "AA":        row_raw.get("AA", "0"),
+            campo:       row_raw.get(campo, "0"),
         })
         posicao += 1
 
@@ -352,6 +353,29 @@ def _parsear_top10_ap(html):
     top10 = ranking[:10]
     print(f"  → {len(ranking)} entradas totais, top 10: {[r['Consultor'] for r in top10]}")
     return top10
+
+
+def extrair_ranking_muepd(page):
+    """Extrai ranking MUEPD (Entrevistas Agendadas) de hoje."""
+    hoje = datetime.now()
+    fmt  = lambda d: d.strftime("%d/%m/%Y")
+
+    print("\n  [ Ranking MUEPD — Hoje ]")
+    page.goto(URL_RANKING, wait_until="networkidle")
+    time.sleep(3)
+    screenshot(page, "7_muepd_inicial")
+
+    for seletor in ["text=Tel Party", "a:has-text('Tel Party')", "[href*='tel']"]:
+        try:
+            page.locator(seletor).first.click()
+            print(f"  ✓ Aba Tel Party: {seletor}")
+            time.sleep(3)
+            break
+        except Exception:
+            pass
+
+    _aplicar_filtros_tel_party(page, fmt(hoje), fmt(hoje), "muepd_hoje", criterio="ea")
+    return _parsear_ranking_da_pagina(page, "muepd_hoje", campo="EA")
 
 
 def extrair_top10_ap(page):
@@ -517,6 +541,7 @@ def main():
         fazer_login(page, conta["email"], conta["senha"])
         dados_brutos, metas = extrair_tabela_economia(page)
         ranking_hoje, ranking_7dias = extrair_rankings_muapd(page)
+        ranking_muepd = extrair_ranking_muepd(page)
         top10_ap = extrair_top10_ap(page)
 
         browser.close()
@@ -534,6 +559,7 @@ def main():
     salvar_csv(linhas,         "dados_extraidos.csv",  campos_dados)
     salvar_csv(ranking_hoje,   "ranking_muapd.csv",    campos_ranking)
     salvar_csv(ranking_7dias,  "ranking_7dias.csv",    campos_ranking)
+    salvar_csv(ranking_muepd,  "ranking_muepd.csv",    ["Posição", "Consultor", "EA"])
     salvar_csv(top10_ap,       "top10_ap.csv",         campos_top10)
     salvar_metas(metas)
 

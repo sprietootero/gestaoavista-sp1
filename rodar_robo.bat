@@ -12,7 +12,7 @@ echo Iniciando extracao de dados w1nner...
 echo.
 if %ERRORLEVEL% == 0 (
     echo Sucesso! Fazendo push para o GitHub...
-    git add dados_extraidos.csv ranking_muapd.csv ranking_7dias.csv top10_ap.csv metas.json
+    git add dados_extraidos.csv ranking_muapd.csv ranking_7dias.csv ranking_muepd.csv top10_ap.csv metas.json
     git commit -m "dados: atualizacao manual"
     git pull --rebase --autostash origin main
     git push

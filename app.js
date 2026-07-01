@@ -9,6 +9,7 @@ const tableBody    = document.getElementById('table-body');
 const tableFoot    = document.getElementById('table-footer');
 const rankingAside  = document.getElementById('ranking-aside-body');
 const ranking7dias  = document.getElementById('ranking-aside-body-7dias');
+const rankingMuepd  = document.getElementById('ranking-aside-body-muepd');
 const syncTime      = document.getElementById('sync-time');
 const top10APBody   = document.getElementById('top10-ap-body');
 
@@ -156,18 +157,18 @@ function carregarDados() {
 // ── Ranking MUAPD ──────────────────────────────
 const MEDALHAS = ['🥇', '🥈', '🥉'];
 
-function renderizarListaRanking(container, rows) {
+function renderizarListaRanking(container, rows, campo = 'AA') {
   const dados = rows.filter(r => r['Consultor'] || r['Consultor/Nível']);
   container.innerHTML = dados.map((row, i) => {
     const nome = row['Consultor'] || row['Consultor/Nível'] || '–';
-    const aa   = row['AA'] || '0';
+    const val  = row[campo] || '0';
     const pos  = i < 3 ? `<span class="rank-pos medal">${MEDALHAS[i]}</span>`
                        : `<span class="rank-pos">${i + 1}</span>`;
     const cls  = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
     return `<div class="ranking-row ${cls}">
       ${pos}
       <span class="rank-name">${nome}</span>
-      <span class="rank-aa">${aa}</span>
+      <span class="rank-aa">${val}</span>
     </div>`;
   }).join('');
 }
@@ -179,26 +180,72 @@ function renderizarRanking(rows) {
 function carregarRanking() {
   Papa.parse('ranking_muapd.csv' + CACHE_BUST(), {
     download: true, header: true, skipEmptyLines: true,
-    complete: r => renderizarListaRanking(rankingAside, r.data),
+    complete: r => renderizarListaRanking(rankingAside, r.data, 'AA'),
     error:    () => console.warn('ranking_muapd.csv não encontrado'),
   });
   Papa.parse('ranking_7dias.csv' + CACHE_BUST(), {
     download: true, header: true, skipEmptyLines: true,
-    complete: r => renderizarListaRanking(ranking7dias, r.data),
+    complete: r => renderizarListaRanking(ranking7dias, r.data, 'AA'),
     error:    () => console.warn('ranking_7dias.csv não encontrado'),
   });
 }
 
+function carregarRankingMUEPD() {
+  Papa.parse('ranking_muepd.csv' + CACHE_BUST(), {
+    download: true, header: true, skipEmptyLines: true,
+    complete: r => renderizarListaRanking(rankingMuepd, r.data, 'EA'),
+    error:    () => console.warn('ranking_muepd.csv não encontrado'),
+  });
+}
+
 function trocarAbaRanking(aba, btn) {
-  document.querySelectorAll('.ranking-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (aba === 'hoje') {
+  sidebarIdx = aba === 'hoje' ? 0 : 1;
+  mostrarSidebar(SIDEBAR_VIEWS[sidebarIdx]);
+}
+
+// ── Rotação do painel lateral ──────────────────
+const SIDEBAR_VIEWS   = ['muapd-hoje', 'muapd-7dias', 'muepd-hoje'];
+const SIDEBAR_DURACAO = 20 * 1000;
+let sidebarIdx = 0;
+
+function mostrarSidebar(view) {
+  const title     = document.getElementById('ranking-aside-title');
+  const colLabel  = document.getElementById('ranking-aside-col-label');
+  const tabsMuapd = document.getElementById('ranking-tabs-muapd');
+  const tabsMuepd = document.getElementById('ranking-tabs-muepd');
+
+  rankingAside.style.display  = 'none';
+  ranking7dias.style.display  = 'none';
+  rankingMuepd.style.display  = 'none';
+
+  if (view === 'muapd-hoje') {
+    title.textContent = 'RANKING MUAPD';
+    colLabel.textContent = 'AA';
+    tabsMuapd.style.display = '';
+    tabsMuepd.style.display = 'none';
+    tabsMuapd.querySelectorAll('.ranking-tab').forEach((b, i) =>
+      b.classList.toggle('active', i === 0));
     rankingAside.style.display = '';
-    ranking7dias.style.display = 'none';
-  } else {
-    rankingAside.style.display = 'none';
+  } else if (view === 'muapd-7dias') {
+    title.textContent = 'RANKING MUAPD';
+    colLabel.textContent = 'AA';
+    tabsMuapd.style.display = '';
+    tabsMuepd.style.display = 'none';
+    tabsMuapd.querySelectorAll('.ranking-tab').forEach((b, i) =>
+      b.classList.toggle('active', i === 1));
     ranking7dias.style.display = '';
+  } else {
+    title.textContent = 'RANKING MUEPD';
+    colLabel.textContent = 'EA';
+    tabsMuapd.style.display = 'none';
+    tabsMuepd.style.display = '';
+    rankingMuepd.style.display = '';
   }
+}
+
+function avancarSidebar() {
+  sidebarIdx = (sidebarIdx + 1) % SIDEBAR_VIEWS.length;
+  mostrarSidebar(SIDEBAR_VIEWS[sidebarIdx]);
 }
 
 // ── Timestamp ──────────────────────────────────
@@ -214,6 +261,7 @@ function recarregarDados() {
   carregarMetas();
   carregarDados();
   carregarRanking();
+  carregarRankingMUEPD();
   carregarTop10AP();
   atualizarSyncTime();
 }
@@ -410,5 +458,6 @@ function avancarView() {
 document.addEventListener('DOMContentLoaded', () => {
   recarregarDados();
   setInterval(recarregarDados, 30 * 60 * 1000);
-  setInterval(avancarView, VIEW_DURACAO);
+  setInterval(avancarView,    VIEW_DURACAO);
+  setInterval(avancarSidebar, SIDEBAR_DURACAO);
 });
