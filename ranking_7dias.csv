@@ -1,41 +1,41 @@
 Posição,Consultor,AA
-1,João Pedro Micelli Pedroso,10
-2,Lauro  Cabral,9
-3,Gabriel Macchion,9
+1,Gabriel Macchion,10
+2,João Pedro Micelli Pedroso,10
+3,Lauro  Cabral,9
 4,Vinicius Casante Di Giacomo,7
 5,Paulo Coelho,6
 6,Erick Oliveira,5
-7,Guilherme Gonçalves Capaldi,5
-8,Ana Carolina Pereira Fernandes,5
+7,Ana Carolina Pereira Fernandes,5
+8,Guilherme Gonçalves Capaldi,5
 9,Matheus Giovanini Ferreyra Avelar,4
 10,Daniela Fonseca dos Santos,4
 11,Aidan Victor Osawa Ravin,4
 12,Sally Kim,4
 13,Gabriel Maroti dos Santos,4
-14,Felipe Moreira,3
-15,Gabriel Ferreira Fernandes,3
-16,Gabriel Pereira de Santana Silva,3
-17,Miguel Abdalla,3
-18,Raissa Fiche,3
+14,Raissa Fiche,3
+15,Anderson dos Santos da Silva,3
+16,Felipe Moreira,3
+17,Júlio Nascimento Feitosa,3
+18,Gabriel Pereira de Santana Silva,3
 19,Luiz Felipe Domingues Valente,3
-20,Júlio Nascimento Feitosa,3
-21,Eduarda dos Santos Moreira,3
-22,Anderson dos Santos da Silva,3
-23,Raphael Ramos,2
-24,Vitor Coelho Silva,2
-25,Filipe Guarnieri,2
-26,Lucas de Medeiros Assumpção,2
-27,Bruno Gonçalves Nunes da Costa,2
+20,Miguel Abdalla,3
+21,Gabriel Ferreira Fernandes,3
+22,Daniel Hupfeld Moreno,3
+23,Eduarda dos Santos Moreira,3
+24,Eduardo Gianesi Dias de Aguiar Fadul,2
+25,Bruno Gonçalves Nunes da Costa,2
+26,Filipe Guarnieri,2
+27,Victor Hugo de Mendonça Tolini,2
 28,Raphael Mendes Moreira,2
-29,João Victor Carvalhaes de Freitas,2
-30,Daniel Hupfeld Moreno,2
-31,Davi Cortez Gianezzi,2
-32,Victor Hugo de Mendonça Tolini,2
-33,Eduardo Gianesi Dias de Aguiar Fadul,2
-34,Bruna Thayna Avelar Sobrinho Bezerra,2
-35,Vinícius da Luz Teixeira,1
-36,Larissa Araujo da Silva,1
-37,Vitor Venturoli Cardoso,1
+29,Davi Cortez Gianezzi,2
+30,Bruna Thayna Avelar Sobrinho Bezerra,2
+31,Vitor Coelho Silva,2
+32,Lucas de Medeiros Assumpção,2
+33,João Victor Carvalhaes de Freitas,2
+34,Raphael Ramos,2
+35,Vitor Venturoli Cardoso,1
+36,Vinícius da Luz Teixeira,1
+37,Larissa Araujo da Silva,1
 38,Pedro Henrique Pereira dos Santos Melo,1
 39,Gabriel Prates Gragnani,1
 40,João Victor Barbosa Paixão,1
@@ -47,32 +47,34 @@ Posição,Consultor,AA
 46,Luís Gustavo Rodrigues Martins,1
 47,Matheus Santiago,1
 48,Anne Costa,1
-49,Samuel Pini Baptista,0
-50,Heitor Tebar,0
-51,Santiago Prieto Otero,0
-52,Reynaldo Koch Utaka,0
-53,Rafael André Dias,0
-54,Fernando Bianchi Vieira,0
-55,Ivie Collado Bastos,0
-56,Vinicius Jhunji Kido,0
-57,Gianlucca Venturi,0
-58,Eduardo Florio Fukugava,0
-59,Enzo Bastos Panza,0
-60,Bruno Liblik Quintaes,0
-61,Tatiana Aparecida Conceição Pires,0
-62,Guilherme Gonçalves Santana,0
-63,Eduardo Pinheiro De Mello,0
-64,Marina Ferreira Nishiya,0
-65,Alexandre do Nascimento Remigio De Oliveira,0
-66,Henrique Martins Pinto,0
-67,Rodrigo de Oliveira Goulart,0
-68,Guilherme Amaral Marques,0
+49,Heitor Tebar,0
+50,Santiago Prieto Otero,0
+51,Reynaldo Koch Utaka,0
+52,Rafael André Dias,0
+53,Eduardo Pinheiro De Mello,0
+54,Ivie Collado Bastos,0
+55,Vinicius Jhunji Kido,0
+56,Arthur Pacelli Basilio,0
+57,Eduardo Florio Fukugava,0
+58,Enzo Bastos Panza,0
+59,Bruno Liblik Quintaes,0
+60,Tatiana Aparecida Conceição Pires,0
+61,Guilherme Gonçalves Santana,0
+62,Rodrigo de Oliveira Goulart,0
+63,Marina Ferreira Nishiya,0
+64,Guilherme Amaral Marques,0
+65,Henrique Martins Pinto,0
+66,Alexandre do Nascimento Remigio De Oliveira,0
+67,Diego Alboredo,0
+68,Rodolfo Araújo Contini,0
 69,André Machado Tavares,0
-70,Rodolfo Araújo Contini,0
+70,Renato Norberto Segri,0
 71,Henrique Cubero Regi,0
-72,Renato Norberto Segri,0
+72,Fabio Mattioli Ferigolli Romanoff,0
 73,Thiago de Arruda Lopes,0
 74,Daniel Almeida dos Prazeres,0
-75,Gabriel Calil do Nascimento,0
-76,Fabio Mattioli Ferigolli Romanoff,0
-77,Bruno Toledo Fabrini,0
+75,Fernando Bianchi Vieira,0
+76,Gabriel Calil do Nascimento,0
+77,Gianlucca Venturi,0
+78,Bruno Toledo Fabrini,0
+79,Samuel Pini Baptista,0
