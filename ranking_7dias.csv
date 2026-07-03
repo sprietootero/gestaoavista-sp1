@@ -1,85 +1,84 @@
 Posição,Consultor,AA
 1,João Pedro Micelli Pedroso,10
 2,Gabriel Macchion,9
-3,Vinicius Casante Di Giacomo,9
-4,Lauro  Cabral,8
-5,Paulo Coelho,6
-6,Matheus Giovanini Ferreyra Avelar,5
-7,Ana Carolina Pereira Fernandes,5
-8,Erick Oliveira,4
-9,Aidan Victor Osawa Ravin,4
-10,Gabriel Maroti dos Santos,4
-11,Daniela Fonseca dos Santos,4
-12,Raissa Fiche,3
-13,Luiz Felipe Domingues Valente,3
-14,João Victor Lemos de Oliveira,3
-15,Daniel Almeida dos Prazeres,3
-16,Anderson dos Santos da Silva,3
+3,Lauro  Cabral,7
+4,Vinicius Casante Di Giacomo,6
+5,Paulo Coelho,5
+6,Ana Carolina Pereira Fernandes,5
+7,Matheus Giovanini Ferreyra Avelar,5
+8,Daniela Fonseca dos Santos,4
+9,Gabriel Maroti dos Santos,4
+10,Aidan Victor Osawa Ravin,4
+11,Erick Oliveira,4
+12,Eduarda dos Santos Moreira,3
+13,Felipe Moreira,3
+14,Luiz Felipe Domingues Valente,3
+15,Miguel Abdalla,3
+16,Daniel Almeida dos Prazeres,3
 17,Gabriel Pereira de Santana Silva,3
-18,Miguel Abdalla,3
-19,Daniel Hupfeld Moreno,3
-20,Raphael Mendes Moreira,3
-21,Gabriel Ferreira Fernandes,3
-22,Júlio Nascimento Feitosa,3
-23,Eduarda dos Santos Moreira,3
-24,Felipe Moreira,3
-25,Guilherme Gonçalves Capaldi,3
-26,Victor Hugo de Mendonça Tolini,3
-27,Bruno Gonçalves Nunes da Costa,2
-28,Bruna Thayna Avelar Sobrinho Bezerra,2
-29,Sally Kim,2
-30,Davi Cortez Gianezzi,2
-31,Victor Chibana,2
-32,Filipe Guarnieri,2
-33,João Victor Carvalhaes de Freitas,2
-34,Antonio Correa,2
-35,Matheus Santiago,1
-36,Vinícius da Luz Teixeira,1
-37,Larissa Araujo da Silva,1
-38,Vitor Venturoli Cardoso,1
-39,Pedro Henrique Pereira dos Santos Melo,1
-40,Gabriel Prates Gragnani,1
-41,Guilherme Gonçalves Santana,1
-42,João Victor Barbosa Paixão,1
-43,Vitor Coelho Silva,1
-44,Lucas de Medeiros Assumpção,1
-45,Eduardo Gianesi Dias de Aguiar Fadul,1
-46,Gabriel Calil do Nascimento,1
-47,Estêvão Stutz Gonçalves,1
-48,Alexandre Augusto Barbosa Mariano,1
-49,Tatiana Aparecida Conceição Pires,1
-50,Luís Gustavo Rodrigues Martins,1
-51,Anne Costa,1
-52,Raphael Ramos,0
-53,Vinicius Jhunji Kido,0
-54,Heitor Tebar,0
-55,Santiago Prieto Otero,0
-56,Rafael André Dias,0
-57,Ivie Collado Bastos,0
-58,Eduardo Florio Fukugava,0
-59,Enzo Bastos Panza,0
-60,Bruno Liblik Quintaes,0
-61,Rodolfo Araújo Contini,0
-62,Renan Dias Souza,0
-63,Vinicius Gouveia Francisco,0
-64,Marina Ferreira Nishiya,0
-65,Henrique Martins Pinto,0
-66,André Machado Tavares,0
-67,Renato Norberto Segri,0
-68,Fabio Mattioli Ferigolli Romanoff,0
-69,Fernando Bianchi Vieira,0
-70,Gianlucca Venturi,0
-71,Eduardo Pinheiro De Mello,0
-72,Adriano Silva Freitas,0
-73,Rodrigo de Oliveira Goulart,0
-74,Guilherme Amaral Marques,0
-75,Alexandre do Nascimento Remigio De Oliveira,0
-76,Diego Alboredo,0
-77,Arthur Pacelli Basilio,0
-78,Nathalia Boschiero,0
-79,Gustavo Gimenez Ramos,0
-80,Bruno Toledo Fabrini,0
-81,Samuel Pini Baptista,0
-82,Henrique Cubero Regi,0
+18,Daniel Hupfeld Moreno,3
+19,Raphael Mendes Moreira,3
+20,Raissa Fiche,3
+21,Júlio Nascimento Feitosa,3
+22,Victor Hugo de Mendonça Tolini,3
+23,Anderson dos Santos da Silva,3
+24,João Victor Lemos de Oliveira,3
+25,João Victor Carvalhaes de Freitas,2
+26,Antonio Correa,2
+27,Guilherme Gonçalves Capaldi,2
+28,Sally Kim,2
+29,Davi Cortez Gianezzi,2
+30,Gabriel Ferreira Fernandes,2
+31,Filipe Guarnieri,2
+32,Bruno Gonçalves Nunes da Costa,2
+33,Victor Chibana,2
+34,Matheus Santiago,1
+35,Larissa Araujo da Silva,1
+36,Vitor Venturoli Cardoso,1
+37,Pedro Henrique Pereira dos Santos Melo,1
+38,Gabriel Prates Gragnani,1
+39,Guilherme Gonçalves Santana,1
+40,João Victor Barbosa Paixão,1
+41,Vitor Coelho Silva,1
+42,Lucas de Medeiros Assumpção,1
+43,Eduardo Gianesi Dias de Aguiar Fadul,1
+44,Gabriel Calil do Nascimento,1
+45,Estêvão Stutz Gonçalves,1
+46,Alexandre Augusto Barbosa Mariano,1
+47,Tatiana Aparecida Conceição Pires,1
+48,Luís Gustavo Rodrigues Martins,1
+49,Bruna Thayna Avelar Sobrinho Bezerra,1
+50,Anne Costa,1
+51,Rafael André Dias,0
+52,Nathalia Boschiero,0
+53,Raphael Ramos,0
+54,Ivie Collado Bastos,0
+55,Gustavo Gimenez Ramos,0
+56,Eduardo Florio Fukugava,0
+57,Enzo Bastos Panza,0
+58,Bruno Liblik Quintaes,0
+59,Rodolfo Araújo Contini,0
+60,Marina Ferreira Nishiya,0
+61,Renan Dias Souza,0
+62,Vinicius Gouveia Francisco,0
+63,Henrique Martins Pinto,0
+64,André Machado Tavares,0
+65,Renato Norberto Segri,0
+66,Fabio Mattioli Ferigolli Romanoff,0
+67,Fernando Bianchi Vieira,0
+68,Vinícius da Luz Teixeira,0
+69,Gianlucca Venturi,0
+70,Eduardo Pinheiro De Mello,0
+71,Adriano Silva Freitas,0
+72,Rodrigo de Oliveira Goulart,0
+73,Guilherme Amaral Marques,0
+74,Henrique Cubero Regi,0
+75,Thiago de Arruda Lopes,0
+76,Alexandre do Nascimento Remigio De Oliveira,0
+77,Diego Alboredo,0
+78,Arthur Pacelli Basilio,0
+79,Bruno Toledo Fabrini,0
+80,Samuel Pini Baptista,0
+81,Heitor Tebar,0
+82,Santiago Prieto Otero,0
 83,Reynaldo Koch Utaka,0
-84,Thiago de Arruda Lopes,0
