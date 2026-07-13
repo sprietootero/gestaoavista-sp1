@@ -1,14 +1,14 @@
 Posição,Consultor,AA
 1,Cesar Velame  dos Santos,5
-2,Victor Hugo de Mendonça Tolini,2
-3,Sally Kim,1
-4,Larissa Araujo da Silva,1
-5,João Victor Carvalhaes de Freitas,1
-6,Felipe Moreira,1
+2,Felipe Moreira,2
+3,Victor Hugo de Mendonça Tolini,2
+4,Guilherme Gonçalves Capaldi,1
+5,Larissa Araujo da Silva,1
+6,João Victor Carvalhaes de Freitas,1
 7,Erick Oliveira,1
 8,Paulo Coelho,1
-9,Luís Gustavo Rodrigues Martins,1
-10,Pedro Henrique Pereira dos Santos Melo,0
+9,Sally Kim,1
+10,Luís Gustavo Rodrigues Martins,1
 11,Gabriel Ferreira Fernandes,0
 12,Ana Carolina Pereira Fernandes,0
 13,Henrique Martins Pinto,0
@@ -17,32 +17,36 @@ Posição,Consultor,AA
 16,Marina Ferreira Nishiya,0
 17,Aidan Victor Osawa Ravin,0
 18,Guilherme Gonçalves Santana,0
-19,Victor Chibana,0
-20,Eduarda dos Santos Moreira,0
-21,Rafael André Dias,0
-22,Eduardo Gianesi Dias de Aguiar Fadul,0
-23,Rodolfo Araújo Contini,0
-24,Filipe Guarnieri,0
-25,Daniel Almeida dos Prazeres,0
-26,Gianlucca Venturi,0
-27,Henrique Cubero Regi,0
-28,Gabriel Pereira de Santana Silva,0
-29,João Pedro Micelli Pedroso,0
-30,Raphael Mendes Moreira,0
-31,Matheus Giovanini Ferreyra Avelar,0
-32,Vinicius Casante Di Giacomo,0
-33,Gabriel Calil do Nascimento,0
-34,Estêvão Stutz Gonçalves,0
-35,Bruno Toledo Fabrini,0
-36,Miguel Abdalla,0
-37,Anderson dos Santos da Silva,0
-38,Gabriel Macchion,0
-39,Raphael Ramos,0
-40,Vinícius da Luz Teixeira,0
-41,Fernando Bianchi Vieira,0
-42,Renato Norberto Segri,0
+19,João Victor Barbosa Paixão,0
+20,Victor Chibana,0
+21,Eduarda dos Santos Moreira,0
+22,Rafael André Dias,0
+23,Eduardo Gianesi Dias de Aguiar Fadul,0
+24,Rodolfo Araújo Contini,0
+25,Vinícius da Luz Teixeira,0
+26,Daniel Almeida dos Prazeres,0
+27,Filipe Guarnieri,0
+28,Henrique Cubero Regi,0
+29,Gabriel Pereira de Santana Silva,0
+30,Gianlucca Venturi,0
+31,João Pedro Micelli Pedroso,0
+32,Matheus Giovanini Ferreyra Avelar,0
+33,Raphael Mendes Moreira,0
+34,Gabriel Calil do Nascimento,0
+35,Estêvão Stutz Gonçalves,0
+36,Bruno Toledo Fabrini,0
+37,Samuel Pini Baptista,0
+38,Miguel Abdalla,0
+39,Anderson dos Santos da Silva,0
+40,Gabriel Macchion,0
+41,Alexandre Augusto Barbosa Mariano,0
+42,Raphael Ramos,0
 43,Gabriel Maroti dos Santos,0
-44,Vitor Venturoli Cardoso,0
-45,Bruno Gonçalves Nunes da Costa,0
-46,Daniel Hupfeld Moreno,0
-47,Daniela Fonseca dos Santos,0
+44,Fernando Bianchi Vieira,0
+45,Renato Norberto Segri,0
+46,Vinicius Casante Di Giacomo,0
+47,Vitor Venturoli Cardoso,0
+48,Bruno Gonçalves Nunes da Costa,0
+49,Daniel Hupfeld Moreno,0
+50,Daniela Fonseca dos Santos,0
+51,Pedro Henrique Pereira dos Santos Melo,0
