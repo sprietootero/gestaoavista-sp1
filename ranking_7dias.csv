@@ -1,54 +1,54 @@
 Posição,Consultor,AA
-1,Anderson dos Santos da Silva,10
-2,Guilherme Amaral Marques,9
+1,Guilherme Amaral Marques,9
+2,Anderson dos Santos da Silva,9
 3,João Pedro Micelli Pedroso,8
-4,Gabriel Pereira de Santana Silva,7
-5,Diego Garcia Pacífico De Souza,7
-6,Aidan Victor Osawa Ravin,7
-7,Sally Kim,7
-8,Matheus Giovanini Ferreyra Avelar,6
-9,Guilherme Gonçalves Capaldi,6
-10,Daniela Fonseca dos Santos,6
-11,Vinicius Casante Di Giacomo,6
-12,Cesar Velame dos Santos Júnior,6
-13,Victor Hugo de Mendonça Tolini,5
-14,Erick Oliveira,5
-15,Paulo Coelho,5
+4,Aidan Victor Osawa Ravin,7
+5,Gabriel Pereira de Santana Silva,7
+6,Matheus Giovanini Ferreyra Avelar,6
+7,Cesar Velame dos Santos Júnior,6
+8,Erick Oliveira,5
+9,Diego Garcia Pacífico De Souza,5
+10,Daniela Fonseca dos Santos,5
+11,Sally Kim,5
+12,Paulo Coelho,5
+13,Vinicius Casante Di Giacomo,5
+14,Victor Hugo de Mendonça Tolini,5
+15,Guilherme Gonçalves Capaldi,5
 16,Gabriel Macchion,4
 17,Estêvão Stutz Gonçalves,4
-18,Otávio Bosco Rollo Duarte,4
-19,Felipe Moreira,4
-20,João Victor Lemos de Oliveira,3
+18,Felipe Moreira,4
+19,Otávio Bosco Rollo Duarte,4
+20,Thiago de Arruda Lopes,3
 21,Luís Gustavo Rodrigues Martins,3
-22,Larissa Araujo da Silva,3
-23,João Vitor Simão Renda Lanfredi,3
-24,Diego Alboredo,3
-25,Arthur Pacelli Basilio,3
-26,Eduardo Trevisan Marconato de Carvalho,3
-27,Ana Carolina Pereira Fernandes,3
-28,Thiago de Arruda Lopes,3
-29,Miguel Abdalla,3
-30,Raphael Ramos,3
-31,Davi Cortez Gianezzi,2
-32,João Victor Carvalhaes de Freitas,2
-33,Renato Norberto Segri,2
-34,Renan Dias Souza,2
-35,Guilherme Gonçalves Santana,2
-36,Bruno Gonçalves Nunes da Costa,2
-37,Nathalia Boschiero,2
+22,João Vitor Simão Renda Lanfredi,3
+23,Diego Alboredo,3
+24,Arthur Pacelli Basilio,3
+25,Eduardo Trevisan Marconato de Carvalho,3
+26,Ana Carolina Pereira Fernandes,3
+27,Larissa Araujo da Silva,3
+28,Miguel Abdalla,3
+29,Raphael Ramos,3
+30,João Victor Lemos de Oliveira,3
+31,Renan Dias Souza,2
+32,Davi Cortez Gianezzi,2
+33,João Victor Carvalhaes de Freitas,2
+34,Guilherme Gonçalves Santana,2
+35,Bruno Toledo Fabrini,2
+36,Nathalia Boschiero,2
+37,Bruno Gonçalves Nunes da Costa,2
 38,Alexandre Oliveira,2
 39,Raphael Mendes Moreira,2
-40,Bruno Toledo Fabrini,2
-41,Lauro  Cabral,2
-42,Gabriel Maroti dos Santos,1
-43,Rafael André Dias,1
-44,Letícia Domingos Moraes,1
-45,Marina Ferreira Nishiya,1
-46,Marcos Vinicius Rodolpho Pegoraro,1
-47,Daniel Almeida dos Prazeres,1
+40,Renato Norberto Segri,2
+41,Gabriel Prates Gragnani,1
+42,Rafael André Dias,1
+43,Marina Ferreira Nishiya,1
+44,Marcos Vinicius Rodolpho Pegoraro,1
+45,Daniel Almeida dos Prazeres,1
+46,Fernando Bianchi Vieira,1
+47,Lauro  Cabral,1
 48,Gabriel Calil do Nascimento,1
-49,Fernando Bianchi Vieira,1
-50,Gabriel Prates Gragnani,1
+49,Gabriel Maroti dos Santos,1
+50,Letícia Domingos Moraes,1
 51,Eduardo Pinheiro De Mello,0
 52,Gianlucca Venturi,0
 53,Filipe Guarnieri,0
@@ -69,30 +69,24 @@ Posição,Consultor,AA
 68,Eduardo Gianesi Dias de Aguiar Fadul,0
 69,Luiz Felipe Domingues Valente,0
 70,Heitor Tebar,0
-71,Henrique Cubero Regi,0
-72,Raissa Fiche,0
-73,Rafael De Freitas Lopes,0
-74,Lucca Framarin Carraresi,0
-75,Karliane Cristina Pereira dos Santos,0
-76,Gabriel Ribeiro da Silva Mota,0
-77,Rafael Schaffer,0
-78,Camilla Reginato Myrrha,0
-79,Nicoly Guedes Venturini,0
-80,André Ama Martins da Nóbrega,0
-81,Luca Feitosa Veras Aroso,0
-82,Rafael Moura De Santa Cruz Leite,0
-83,Vitor Fuzeto Di Sessa,0
-84,Pedro Xavier Totti,0
-85,Gabriella Lazari,0
-86,Diego Teodoro Silva,0
-87,Lucas Keiki Matsumoto Frugoli,0
-88,Geovanna Ferreira de Veras,0
-89,Larissa da Silva Moreira,0
-90,Joao Raphael Anibal Palla,0
-91,Leonardo Oliveira da Silva,0
-92,Raul Slompo,0
-93,Maria Clara Vilheno Stracci Gogolew Machado,0
-94,Bruno Gomes,0
-95,Henrik Lobo de Castro,0
-96,Gustavo Borges Siqueira,0
-97,Rodolfo Araújo Contini,0
+71,Raissa Fiche,0
+72,Camilla Reginato Myrrha,0
+73,Nicoly Guedes Venturini,0
+74,André Ama Martins da Nóbrega,0
+75,Luca Feitosa Veras Aroso,0
+76,Rafael Moura De Santa Cruz Leite,0
+77,Vitor Fuzeto Di Sessa,0
+78,Pedro Xavier Totti,0
+79,Gabriella Lazari,0
+80,Diego Teodoro Silva,0
+81,Lucas Keiki Matsumoto Frugoli,0
+82,Geovanna Ferreira de Veras,0
+83,Larissa da Silva Moreira,0
+84,Joao Raphael Anibal Palla,0
+85,Leonardo Oliveira da Silva,0
+86,Raul Slompo,0
+87,Maria Clara Vilheno Stracci Gogolew Machado,0
+88,Bruno Gomes,0
+89,Henrik Lobo de Castro,0
+90,Gustavo Borges Siqueira,0
+91,Rodolfo Araújo Contini,0
