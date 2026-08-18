@@ -4,134 +4,50 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>W1 Gestão à Vista – SP1</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #05171E;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .box {
+      text-align: center;
+      padding: 40px;
+    }
+    .logo {
+      width: 56px; height: 56px;
+      background: #00C2B8;
+      color: #05171E;
+      font-weight: 900;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      margin: 0 auto 24px;
+    }
+    h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 0.95rem;
+      color: #6B7280;
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Cabeçalho -->
-  <header class="header">
-    <div class="header-left">
-      <div class="logo-box">W1</div>
-      <div class="header-titles">
-        <h1 class="header-title">Gestão à Vista – Office SP1</h1>
-        <p class="header-subtitle">PRODUÇÃO E RANKINGS EM TEMPO REAL</p>
-      </div>
-    </div>
-    <div class="header-right">
-      <button id="btn-atualizar" class="btn-atualizar" onclick="recarregarDados()">Atualizar</button>
-      <div class="sync-info">
-        <span class="sync-dot"></span>
-        <span id="sync-time">–</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Modal gráfico de barras AP por equipe -->
-  <div id="bar-chart-modal" class="chart-modal" onclick="fecharGraficoBarras(event)">
-    <div class="chart-modal-box chart-modal-wide">
-      <h3 class="chart-modal-title">AP Realizado vs Meta por Equipe</h3>
-      <canvas id="bar-chart"></canvas>
-      <button class="chart-close" onclick="fecharGraficoBarras()">Fechar</button>
-    </div>
+  <div class="box">
+    <div class="logo">W1</div>
+    <h1>Gestão à Vista – SP1</h1>
+    <p>Este painel está temporariamente offline.</p>
   </div>
-
-  <!-- Modal do gráfico AP -->
-  <div id="chart-modal" class="chart-modal" onclick="fecharGrafico(event)">
-    <div class="chart-modal-box">
-      <h3 class="chart-modal-title">Realização AP do Mês</h3>
-      <canvas id="ap-chart"></canvas>
-      <div id="chart-legend" class="chart-legend"></div>
-      <button class="chart-close" onclick="fecharGrafico()">Fechar</button>
-    </div>
-  </div>
-
-  <!-- Metas -->
-  <div class="goals-grid">
-    <div class="goal-box goal-ap-semana">
-      <span class="goal-label">META AP SEMANA</span>
-      <span class="goal-value" id="meta-ap-semana">–</span>
-    </div>
-    <div class="goal-box goal-pp-semana">
-      <span class="goal-label">META PP SEMANA</span>
-      <span class="goal-value" id="meta-pp-semana">–</span>
-    </div>
-    <div class="goal-box goal-ap-mes" onclick="abrirGrafico()" title="Ver gráfico de realização">
-      <span class="goal-label">META AP MÊS</span>
-      <span class="goal-value" id="meta-ap-mes">–</span>
-      <span class="goal-chart-hint">📊 ver gráfico</span>
-    </div>
-    <div class="goal-box goal-pp-mes">
-      <span class="goal-label">META PP MÊS</span>
-      <span class="goal-value" id="meta-pp-mes">–</span>
-    </div>
-  </div>
-
-  <!-- Corpo principal -->
-  <main class="main-body">
-
-    <!-- View: Resultados -->
-    <section id="view-results" class="view active">
-      <div class="section-title-bar">
-        <span class="section-indicator"></span>
-        <h2 class="section-title">RESULTADOS DO MÊS</h2>
-        <button class="btn-grafico-barras" onclick="abrirGraficoBarras()">📊 AP por Equipe</button>
-      </div>
-
-      <div class="table-wrapper">
-        <table class="w1-table">
-          <thead>
-            <tr>
-              <th>Equipe</th>
-              <th>AA</th>
-              <th>AF</th>
-              <th>AP</th>
-              <th>AP Valor</th>
-              <th>REC</th>
-              <th class="col-pp">PP Total</th>
-            </tr>
-          </thead>
-          <tbody id="table-body"></tbody>
-          <tfoot id="table-footer"></tfoot>
-        </table>
-      </div>
-    </section>
-
-    <!-- View: Top 10 AP do Mês -->
-    <section id="view-top10-ap" class="view">
-      <div class="section-title-bar">
-        <span class="section-indicator"></span>
-        <h2 class="section-title">TOP 10 AP DO MÊS</h2>
-        <span class="ranking-subtitle">ANÁLISES PAGAS</span>
-      </div>
-      <div class="top10-ap-list" id="top10-ap-body"></div>
-    </section>
-
-    <!-- Painel lateral de ranking -->
-    <aside class="ranking-aside">
-      <div class="ranking-aside-header">
-        <h3 id="ranking-aside-title">RANKING MUAPD</h3>
-        <div id="ranking-tabs-muapd" class="ranking-tabs">
-          <button class="ranking-tab active" onclick="trocarAbaRanking('hoje', this)">Hoje</button>
-          <button class="ranking-tab" onclick="trocarAbaRanking('7dias', this)">7 Dias</button>
-        </div>
-        <div id="ranking-tabs-muepd" class="ranking-tabs" style="display:none">
-          <span class="ranking-tab active" style="cursor:default">Hoje</span>
-        </div>
-      </div>
-      <div class="ranking-aside-cols">
-        <span class="ranking-aside-label">#</span>
-        <span class="ranking-aside-label">Consultor</span>
-        <span class="ranking-aside-label col-aa" id="ranking-aside-col-label">AA</span>
-      </div>
-      <div id="ranking-aside-body"></div>
-      <div id="ranking-aside-body-7dias" style="display:none"></div>
-      <div id="ranking-aside-body-muepd" style="display:none"></div>
-    </aside>
-
-  </main>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>
